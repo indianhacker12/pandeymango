@@ -598,6 +598,9 @@
             <a href="{{ url_for('products') }}" class="btn btn-warning btn-lg rounded-pill fw-bold">
                 <i class="fas fa-shopping-cart me-2"></i>Shop Our Mango Collection
             </a>
+            <a href="{{ url_for('book_mangoes') }}" class="btn btn-success btn-lg rounded-pill fw-bold ms-3">
+                <i class="fas fa-calendar-plus me-2"></i>Book Mangoes in Advance
+            </a>
         </div>
     </div>
 </section>
@@ -728,6 +731,68 @@
         </div>
     </div>
 </section>
+
+<!-- Booking CTA Section -->
+<section class="py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/mangos.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-white" data-aos="fade-right">
+                <h2 class="display-4 fw-bold mb-4">Book Your Mangoes <span class="text-warning">in Advance</span></h2>
+                <p class="lead mb-4">Guarantee your supply of premium mangoes during peak season. Book now and get them delivered on your preferred date!</p>
+                <ul class="list-unstyled mb-4">
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                        <span>Reserve your favorite varieties before they sell out</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                        <span>Choose your preferred delivery date</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                        <span>No advance payment required - Pay on delivery</span>
+                    </li>
+                    <li class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                        <span>Free cancellation up to 24 hours before delivery</span>
+                    </li>
+                </ul>
+                <a href="{{ url_for('book_mangoes') }}" class="btn btn-warning btn-lg rounded-pill fw-bold px-5 py-3">
+                    <i class="fas fa-calendar-plus me-2"></i>Book Now
+                </a>
+            </div>
+            <div class="col-lg-5 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
+                <div class="card border-0 rounded-4 shadow-lg">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-calendar-check fa-3x text-dark"></i>
+                        </div>
+                        <h3 class="card-title mb-3">Advanced Booking Benefits</h3>
+                        <p class="card-text mb-4">Get the best mangoes delivered at your convenience. Our advanced booking system ensures you never miss out on your favorite varieties.</p>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Alphonso:</span>
+                            <span class="text-success">₹1500/dozen</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Kesar:</span>
+                            <span class="text-success">₹1200/dozen</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Rajapuri:</span>
+                            <span class="text-success">₹1000/dozen</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold">Payri:</span>
+                            <span class="text-success">₹1200/dozen</span>
+                        </div>
+                        <a href="{{ url_for('book_mangoes') }}" class="btn btn-dark w-100 rounded-pill py-3">Reserve Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}
 
 {% block scripts %}

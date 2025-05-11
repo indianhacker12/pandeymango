@@ -1,0 +1,234 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Booking #{{ booking.id }} Details{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Booking #{{ booking.id }} Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ url_for('admin_bookings') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Bookings
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title mb-0">Booking Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th scope="row" class="ps-0">Booking ID:</th>
+                        <td class="text-end">#{{ booking.id }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Booking Date:</th>
+                        <td class="text-end">{{ booking.booking_date.strftime('%d %b, %Y at %I:%M %p') }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Delivery Date:</th>
+                        <td class="text-end">{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Status:</th>
+                        <td class="text-end">
+                            {% if booking.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif booking.status == 'confirmed' %}
+                                <span class="badge bg-primary">Confirmed</span>
+                            {% elif booking.status == 'delivered' %}
+                                <span class="badge bg-success">Delivered</span>
+                            {% else %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Payment Status:</th>
+                        <td class="text-end">
+                            {% if booking.payment_status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending (Pay on Delivery)</span>
+                            {% else %}
+                                <span class="badge bg-success">Paid</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+                <h5 class="mb-3">Update Status</h5>
+                <form action="{{ url_for('update_booking_status', booking_id=booking.id) }}" method="post" class="d-flex gap-2">
+                    <select name="status" class="form-select">
+                        <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="delivered" {% if booking.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title mb-0">Customer Information</h5>
+            </div>
+            <div class="card-body">
+                {% if booking.user %}
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th scope="row" class="ps-0">Name:</th>
+                        <td class="text-end">{{ booking.user.first_name or '' }} {{ booking.user.last_name or '' }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Username:</th>
+                        <td class="text-end">{{ booking.user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Email:</th>
+                        <td class="text-end">{{ booking.user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Customer Since:</th>
+                        <td class="text-end">{{ booking.user.created_at.strftime('%d %b, %Y') }}</td>
+                    </tr>
+                </table>
+                <a href="{{ url_for('admin_users') }}?search={{ booking.user.username }}" class="btn btn-sm btn-outline-primary mt-3">
+                    <i class="fas fa-user me-1"></i> View Customer Profile
+                </a>
+                {% else %}
+                <div class="alert alert-warning mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>User information not available
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title mb-0">Delivery Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <th scope="row" class="ps-0">Shipping Address:</th>
+                        <td class="text-end">{{ booking.shipping_address }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="ps-0">Contact Number:</th>
+                        <td class="text-end">{{ booking.phone }}</td>
+                    </tr>
+                    {% if booking.notes %}
+                    <tr>
+                        <th scope="row" class="ps-0">Additional Notes:</th>
+                        <td class="text-end">{{ booking.notes }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="card-title mb-0">Order Details</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if booking.product and booking.product.image %}
+                                <img src="{{ url_for('static', filename='images/' + booking.product.image) }}" alt="{{ booking.product.name }}" class="img-thumbnail me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold">{{ booking.product.name if booking.product else 'N/A' }}</div>
+                                    <small class="text-muted">{{ booking.product.category.name if booking.product and booking.product.category else 'N/A' }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>₹{{ booking.product.price if booking.product else 0 }}/dozen</td>
+                        <td>{{ booking.quantity }} dozen</td>
+                        <td class="fw-bold">₹{{ booking.total_amount }}</td>
+                    </tr>
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="3" class="text-end">Total Amount:</th>
+                        <th>₹{{ booking.total_amount }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="d-flex justify-content-between gap-3 mb-5">
+    <a href="{{ url_for('admin_bookings') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to All Bookings
+    </a>
+    
+    <div class="d-flex gap-2">
+        <!-- Status-specific action buttons -->
+        {% if booking.status == 'pending' %}
+        <form action="{{ url_for('update_booking_status', booking_id=booking.id) }}" method="post">
+            <input type="hidden" name="status" value="confirmed">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check-circle me-2"></i>Confirm Booking
+            </button>
+        </form>
+        {% endif %}
+        
+        {% if booking.status == 'confirmed' %}
+        <form action="{{ url_for('update_booking_status', booking_id=booking.id) }}" method="post">
+            <input type="hidden" name="status" value="delivered">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-truck me-2"></i>Mark as Delivered
+            </button>
+        </form>
+        {% endif %}
+        
+        {% if booking.status != 'cancelled' and booking.status != 'delivered' %}
+        <form action="{{ url_for('update_booking_status', booking_id=booking.id) }}" method="post">
+            <input type="hidden" name="status" value="cancelled">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-times-circle me-2"></i>Cancel Booking
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

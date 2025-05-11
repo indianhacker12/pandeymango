@@ -47,6 +47,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {% if '/admin/bookings' in request.path %}active{% endif %}" href="{{ url_for('admin_bookings') }}">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {% if '/admin/settings' in request.path %}active{% endif %}" href="{{ url_for('admin_settings') }}">
                                 <i class="fas fa-cog me-2"></i>
                                 Settings
@@ -103,6 +109,9 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ url_for('admin_users') }}">Users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('admin_bookings') }}">Bookings</a>
                                 </li>
                             </ul>
                         </div>

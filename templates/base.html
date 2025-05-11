@@ -51,6 +51,8 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Account</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('my_bookings') }}"><i class="fas fa-calendar-alt me-2"></i>My Bookings</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('book_mangoes') }}"><i class="fas fa-calendar-plus me-2"></i>Book Mangoes</a></li>
                                 {% if get_user_role(session.user_id) == 'admin' %}
                                     <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</a></li>
                                 {% endif %}

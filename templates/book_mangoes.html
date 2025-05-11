@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Book Mangoes in Advance{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-lg rounded-3">
+                <div class="card-header bg-success text-white py-3">
+                    <h3 class="mb-0 text-center">
+                        <i class="fas fa-calendar-check me-2"></i>Book Mangoes in Advance
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead text-center mb-4">
+                        Book your favorite mangoes in advance and get them delivered on your preferred date!
+                    </p>
+                    
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="post" action="{{ url_for('book_mangoes') }}" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="product_id" class="form-label">Select Mango Variety <span class="text-danger">*</span></label>
+                            <select class="form-select" id="product_id" name="product_id" required>
+                                <option value="" selected disabled>Choose a mango variety</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}" data-price="{{ product.price }}">
+                                    {{ product.name }} - ₹{{ product.price }}/dozen
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a mango variety.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="quantity" class="form-label">Quantity (in dozens) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-box"></i></span>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="10" value="1" required>
+                                <span class="input-group-text">dozen</span>
+                                <div class="invalid-feedback">
+                                    Please enter a valid quantity (1-10 dozens).
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="delivery_date" class="form-label">Preferred Delivery Date <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                <input type="date" class="form-control" id="delivery_date" name="delivery_date" required>
+                                <div class="invalid-feedback">
+                                    Please select a valid delivery date.
+                                </div>
+                            </div>
+                            <small class="text-muted">Please select a date at least 3 days from today.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="shipping_address" class="form-label">Shipping Address <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" required></textarea>
+                                <div class="invalid-feedback">
+                                    Please enter your shipping address.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+                                <div class="invalid-feedback">
+                                    Please enter a valid 10-digit phone number.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="notes" class="form-label">Additional Notes (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                                <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+                            </div>
+                            <small class="text-muted">Any special instructions for delivery or packaging?</small>
+                        </div>
+                        
+                        <div class="bg-light p-3 mb-4 rounded border">
+                            <h5>Order Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Product:</span>
+                                <span id="summary-product">-</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Quantity:</span>
+                                <span id="summary-quantity">1 dozen</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Price per dozen:</span>
+                                <span id="summary-price">₹0</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total Amount:</span>
+                                <span id="summary-total" class="text-success">₹0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading">Important Information</h5>
+                                    <p class="mb-0">
+                                        By placing this advance booking, you're reserving your mangoes for the selected delivery date. 
+                                        No payment is required now. You can pay at the time of delivery (Cash on Delivery). 
+                                        You can cancel your booking up to 24 hours before the delivery date.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold">
+                                <i class="fas fa-calendar-plus me-2"></i>Book Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Set minimum date for delivery
+        const deliveryDateInput = document.getElementById('delivery_date');
+        const today = new Date();
+        const minDate = new Date(today);
+        minDate.setDate(today.getDate() + 3); // Minimum 3 days from today
+        
+        const formatDate = (date) => {
+            let d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+            
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+            
+            return [year, month, day].join('-');
+        };
+        
+        deliveryDateInput.min = formatDate(minDate);
+        
+        // Order summary update
+        const productSelect = document.getElementById('product_id');
+        const quantityInput = document.getElementById('quantity');
+        const summaryProduct = document.getElementById('summary-product');
+        const summaryQuantity = document.getElementById('summary-quantity');
+        const summaryPrice = document.getElementById('summary-price');
+        const summaryTotal = document.getElementById('summary-total');
+        
+        function updateSummary() {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const productName = selectedOption ? selectedOption.text.split(' - ')[0] : '-';
+            const productPrice = selectedOption ? parseInt(selectedOption.dataset.price) : 0;
+            const quantity = parseInt(quantityInput.value) || 1;
+            
+            summaryProduct.textContent = productName;
+            summaryQuantity.textContent = quantity + (quantity === 1 ? ' dozen' : ' dozens');
+            summaryPrice.textContent = '₹' + productPrice;
+            summaryTotal.textContent = '₹' + (productPrice * quantity);
+        }
+        
+        productSelect.addEventListener('change', updateSummary);
+        quantityInput.addEventListener('input', updateSummary);
+    });
+</script>
+{% endblock %} 

@@ -11,7 +11,7 @@ pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/mango'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://u483781610_Luciferr:Somilpandey123%23@srv1495.hstgr.io:3306/u483781610_yaswantt'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -82,6 +82,24 @@ class Review(db.Model):
     comment = db.Column(db.Text)
     status = db.Column(db.String(20), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    quantity = db.Column(db.Integer, nullable=False)
+    booking_date = db.Column(db.DateTime, default=datetime.utcnow)
+    delivery_date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), default='pending') # pending, confirmed, delivered, cancelled
+    notes = db.Column(db.Text)
+    total_amount = db.Column(db.Float, nullable=False)
+    payment_status = db.Column(db.String(20), default='pending') # pending, paid
+    shipping_address = db.Column(db.Text, nullable=False)
+    phone = db.Column(db.String(15), nullable=False)
+    
+    # Add relationships
+    user = db.relationship('User', backref=db.backref('bookings', lazy=True))
+    product = db.relationship('Product', backref=db.backref('bookings', lazy=True))
 
 # Create database tables
 with app.app_context():
@@ -516,6 +534,155 @@ def cart():
                           cart_items=cart_items, 
                           total=total,
                           products=product_list)  # Pass products for "You May Also Like" section
+
+# Booking routes
+@app.route('/book-mangoes', methods=['GET', 'POST'])
+def book_mangoes():
+    if 'user_id' not in session:
+        flash('Please login to book mangoes.', 'warning')
+        return redirect(url_for('login', next=url_for('book_mangoes')))
+    
+    if request.method == 'POST':
+        product_id = request.form.get('product_id', type=int)
+        quantity = request.form.get('quantity', type=int)
+        delivery_date = request.form.get('delivery_date')
+        shipping_address = request.form.get('shipping_address')
+        phone = request.form.get('phone')
+        notes = request.form.get('notes', '')
+        
+        # Validate input
+        if not all([product_id, quantity, delivery_date, shipping_address, phone]):
+            flash('Please fill all required fields.', 'danger')
+            return redirect(url_for('book_mangoes'))
+        
+        # Convert delivery_date string to date object
+        try:
+            delivery_date = datetime.strptime(delivery_date, '%Y-%m-%d').date()
+        except ValueError:
+            flash('Invalid delivery date format.', 'danger')
+            return redirect(url_for('book_mangoes'))
+        
+        # Check if product exists
+        product = Product.query.get(product_id)
+        if not product:
+            flash('Selected product does not exist.', 'danger')
+            return redirect(url_for('book_mangoes'))
+        
+        # Calculate total amount
+        total_amount = product.price * quantity
+        
+        # Create new booking
+        new_booking = Booking(
+            user_id=session['user_id'],
+            product_id=product_id,
+            quantity=quantity,
+            delivery_date=delivery_date,
+            notes=notes,
+            total_amount=total_amount,
+            shipping_address=shipping_address,
+            phone=phone
+        )
+        
+        try:
+            db.session.add(new_booking)
+            db.session.commit()
+            flash('Your mango booking has been placed successfully! You will receive a confirmation soon.', 'success')
+            return redirect(url_for('my_bookings'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+    
+    # GET request - display booking form
+    products = Product.query.filter(Product.stock > 0).all() or product_list
+    return render_template('book_mangoes.html', products=products)
+
+@app.route('/my-bookings')
+def my_bookings():
+    if 'user_id' not in session:
+        flash('Please login to view your bookings.', 'warning')
+        return redirect(url_for('login', next=url_for('my_bookings')))
+    
+    bookings = Booking.query.filter_by(user_id=session['user_id']).order_by(Booking.booking_date.desc()).all()
+    return render_template('my_bookings.html', bookings=bookings)
+
+@app.route('/booking/<int:booking_id>')
+def booking_detail(booking_id):
+    if 'user_id' not in session:
+        flash('Please login to view booking details.', 'warning')
+        return redirect(url_for('login', next=url_for('booking_detail', booking_id=booking_id)))
+    
+    booking = Booking.query.get_or_404(booking_id)
+    
+    # Check if booking belongs to current user
+    if booking.user_id != session['user_id'] and get_user_role(session['user_id']) != 'admin':
+        flash('You are not authorized to view this booking.', 'danger')
+        return redirect(url_for('my_bookings'))
+    
+    return render_template('booking_detail.html', booking=booking)
+
+@app.route('/cancel-booking/<int:booking_id>', methods=['POST'])
+def cancel_booking(booking_id):
+    if 'user_id' not in session:
+        flash('Please login to cancel bookings.', 'warning')
+        return redirect(url_for('login'))
+    
+    booking = Booking.query.get_or_404(booking_id)
+    
+    # Check if booking belongs to current user
+    if booking.user_id != session['user_id'] and get_user_role(session['user_id']) != 'admin':
+        flash('You are not authorized to cancel this booking.', 'danger')
+        return redirect(url_for('my_bookings'))
+    
+    # Check if booking can be cancelled
+    if booking.status in ['delivered', 'cancelled']:
+        flash('This booking cannot be cancelled.', 'danger')
+        return redirect(url_for('booking_detail', booking_id=booking_id))
+    
+    # Update booking status
+    booking.status = 'cancelled'
+    
+    try:
+        db.session.commit()
+        flash('Your booking has been cancelled successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {str(e)}', 'danger')
+    
+    return redirect(url_for('booking_detail', booking_id=booking_id))
+
+# Admin booking routes
+@app.route('/admin/bookings')
+@admin_required
+def admin_bookings():
+    bookings = Booking.query.order_by(Booking.booking_date.desc()).all()
+    return render_template('admin/bookings.html', bookings=bookings)
+
+@app.route('/admin/booking/<int:booking_id>')
+@admin_required
+def admin_booking_detail(booking_id):
+    booking = Booking.query.get_or_404(booking_id)
+    return render_template('admin/booking_detail.html', booking=booking)
+
+@app.route('/admin/booking/update-status/<int:booking_id>', methods=['POST'])
+@admin_required
+def update_booking_status(booking_id):
+    booking = Booking.query.get_or_404(booking_id)
+    status = request.form.get('status')
+    
+    if status not in ['pending', 'confirmed', 'delivered', 'cancelled']:
+        flash('Invalid booking status.', 'danger')
+        return redirect(url_for('admin_booking_detail', booking_id=booking_id))
+    
+    booking.status = status
+    
+    try:
+        db.session.commit()
+        flash('Booking status updated successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_booking_detail', booking_id=booking_id))
 
 if __name__ == '__main__':
     app.run(debug=True)

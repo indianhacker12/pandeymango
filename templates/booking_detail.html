@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Details #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-calendar-check me-2"></i>Booking Details #{{ booking.id }}
+                        </h3>
+                        <a href="{{ url_for('my_bookings') }}" class="btn btn-outline-light">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Booking Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="ps-0">Booking ID:</th>
+                                    <td>#{{ booking.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="ps-0">Booking Date:</th>
+                                    <td>{{ booking.booking_date.strftime('%d %b, %Y at %I:%M %p') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="ps-0">Delivery Date:</th>
+                                    <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="ps-0">Status:</th>
+                                    <td>
+                                        {% if booking.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif booking.status == 'confirmed' %}
+                                            <span class="badge bg-primary">Confirmed</span>
+                                        {% elif booking.status == 'delivered' %}
+                                            <span class="badge bg-success">Delivered</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="ps-0">Payment Status:</th>
+                                    <td>
+                                        {% if booking.payment_status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending (Pay on Delivery)</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Delivery Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="ps-0">Delivery Address:</th>
+                                    <td>{{ booking.shipping_address }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="ps-0">Contact Number:</th>
+                                    <td>{{ booking.phone }}</td>
+                                </tr>
+                                {% if booking.notes %}
+                                <tr>
+                                    <th class="ps-0">Additional Notes:</th>
+                                    <td>{{ booking.notes }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3">Order Details</h5>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if booking.product and booking.product.image %}
+                                            <img src="{{ url_for('static', filename='images/' + booking.product.image) }}" alt="{{ booking.product.name }}" class="img-thumbnail me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% endif %}
+                                            <div>
+                                                <div class="fw-bold">{{ booking.product.name if booking.product else 'N/A' }}</div>
+                                                <small class="text-muted">{{ booking.product.category.name if booking.product and booking.product.category else 'N/A' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>₹{{ booking.product.price if booking.product else 0 }}/dozen</td>
+                                    <td>{{ booking.quantity }} dozen</td>
+                                    <td class="fw-bold">₹{{ booking.total_amount }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total Amount:</th>
+                                    <th>₹{{ booking.total_amount }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {% if booking.status == 'pending' %}
+                                Your booking is pending confirmation. You will receive a confirmation soon.
+                                {% else %}
+                                Your booking is confirmed. Your mangoes will be delivered on the selected date.
+                                {% endif %}
+                            </div>
+                            {% elif booking.status == 'delivered' %}
+                            <div class="alert alert-success mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Your order has been delivered. Thank you for shopping with us!
+                            </div>
+                            {% else %}
+                            <div class="alert alert-danger mb-0">
+                                <i class="fas fa-times-circle me-2"></i>
+                                This booking has been cancelled.
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelBookingModal">
+                                <i class="fas fa-times-circle me-2"></i>Cancel Booking
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Modal -->
+{% if booking.status == 'pending' or booking.status == 'confirmed' %}
+<div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancelBookingModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Cancel Booking
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking? This action cannot be undone.</p>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Note: You can cancel your booking up to 24 hours before the delivery date.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times-circle me-2"></i>Confirm Cancellation
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 
