@@ -1,0 +1,201 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Edit Product' if product else 'New Product' }}{% endblock %}
+
+{% block header %}{{ 'Edit Product' if product else 'Add New Product' }}{% endblock %}
+
+{% block header_buttons %}
+<a href="{{ url_for('admin_products') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="fas fa-arrow-left me-1"></i> Back to Products
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- Basic Information -->
+                    <div class="mb-4">
+                        <h5 class="card-title">Basic Information</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ product.name if product else '' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                <select class="form-select" id="category_id" name="category_id" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if product and product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">Price (₹) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="price" name="price" value="{{ product.price if product else '' }}" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock if product else '0' }}" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h5 class="card-title">Description</h5>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Product Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="5">{{ product.description if product else '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Product Image -->
+                    <div class="mb-4">
+                        <h5 class="card-title">Product Image</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="image" class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text">Recommended size: 800x600 pixels. Max size: 2MB.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Preview</label>
+                                <div class="border rounded p-2 text-center">
+                                    {% if product and product.image %}
+                                    <img id="imagePreview" src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}" class="img-fluid" style="max-height: 150px;" onerror="this.src='{{ url_for('static', filename='images/mango.jpg') }}'">
+                                    {% else %}
+                                    <img id="imagePreview" src="{{ url_for('static', filename='images/mango.jpg') }}" alt="Preview" class="img-fluid" style="max-height: 150px; display: none;">
+                                    <div id="imageMessage">No image selected</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seasonal Settings -->
+                    <div class="mb-4">
+                        <h5 class="card-title">Seasonal Settings</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="in_season" name="in_season" {% if product and ('hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower()) %}checked{% endif %}>
+                                    <label class="form-check-label" for="in_season">Currently In Season</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="season_start" class="form-label">Season Start Month</label>
+                                <select class="form-select" id="season_start" name="season_start">
+                                    <option value="">Select Month</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-4 d-flex justify-content-between">
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> {{ 'Update Product' if product else 'Add Product' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Product Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if product %}
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" target="_blank" class="btn btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i> View Product Page
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" onclick="confirmDelete('delete-form')">
+                        <i class="fas fa-trash me-1"></i> Delete Product
+                    </button>
+                    <form id="delete-form" action="{{ url_for('admin_delete_product', product_id=product.id) }}" method="POST" style="display: none;">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                    </form>
+                    {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-1"></i> Fill out the form to add a new product.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Help & Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Add a detailed description for better SEO.
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Use high-quality images for products.
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Set correct seasonal information.
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Keep stock levels updated regularly.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Image preview script
+    const imageUpload = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageMessage = document.getElementById('imageMessage');
+    
+    if (imageUpload && imagePreview) {
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    if (imageMessage) {
+                        imageMessage.style.display = 'none';
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+{% endblock %} 

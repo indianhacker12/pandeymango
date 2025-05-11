@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Image Slider -->
+    <div id="mangoCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mangoCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#mangoCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#mangoCarousel" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#mangoCarousel" data-bs-slide-to="3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{{ url_for('static', filename='images/hapus3.jpg') }}" class="d-block w-100" alt="Hapus Mango">
+                <div class="carousel-caption">
+                    <h3>Hapus Mangoes - NOW IN SEASON!</h3>
+                    <p>Limited Stock Available - Order Today</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='images/alphanso.jpg') }}" class="d-block w-100" alt="Payri Mango">
+                <div class="carousel-caption">
+                    <h3>Payri Mangoes - Fresh Arrivals</h3>
+                    <p>Sweet & Delicious - Perfect for Summer</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='images/mango (2).jpg') }}" class="d-block w-100" alt="Rajapuri Mangoes">
+                <div class="carousel-caption">
+                    <h3>Rajapuri Mangoes</h3>
+                    <p>Premium Quality - Direct from Farm</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='images/packaging img.jpg') }}" class="d-block w-100" alt="Mango Packaging">
+                <div class="carousel-caption">
+                    <h3>Seasonal Special Offer</h3>
+                    <p>Get 10% OFF on Orders Above ₹1000</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mangoCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mangoCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Season Alert Banner -->
+    <div class="alert alert-success mb-4 shadow-sm" role="alert">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="fas fa-bell fa-2x"></i>
+            </div>
+            <div>
+                <h4 class="alert-heading mb-1">Mango Season Update</h4>
+                <p class="mb-0">Currently only <strong>Hapus, Payri, and Rajapuri</strong> varieties are available due to seasonal limitations. More varieties coming soon!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Currently Available Mangoes -->
+    <section class="py-4 mb-5">
+        <div class="text-center mb-4">
+            <h2 class="display-5 fw-bold text-success">Currently Available Mangoes</h2>
+            <p class="lead mb-0">Fresh, juicy and ready to be delivered to your doorstep</p>
+            <div class="d-flex justify-content-center">
+                <div class="border-bottom border-success" style="width: 80px; border-width: 3px !important;"></div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Hapus Mango Card -->
+            <div class="col-md-4">
+                <div class="card available-mango-card h-100 border-0 shadow">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='images/hapus3.jpg') }}" class="card-img-top rounded-top" alt="Hapus Mango">
+                        <div class="badge bg-success position-absolute px-3 py-2" style="top: 15px; right: 15px; font-size: 1rem;">
+                            <i class="fas fa-check-circle me-1"></i> In Season
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h3 class="card-title fw-bold mb-2">Hapus Mangoes</h3>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">Premium quality Hapus mangoes known for their rich flavor, sweet taste and heavenly aroma.</p>
+                        <p class="fs-5 text-success fw-bold mb-3">₹1200 per dozen</p>
+                        <a href="{{ url_for('products') }}?search=hapus" class="btn btn-success w-100">Order Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payri Mango Card -->
+            <div class="col-md-4">
+                <div class="card available-mango-card h-100 border-0 shadow">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='images/alphanso.jpg') }}" class="card-img-top rounded-top" alt="Payri Mango">
+                        <div class="badge bg-success position-absolute px-3 py-2" style="top: 15px; right: 15px; font-size: 1rem;">
+                            <i class="fas fa-check-circle me-1"></i> In Season
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h3 class="card-title fw-bold mb-2">Payri Mangoes</h3>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="card-text">Sweet and juicy Payri mangoes with a tangy undertone. Perfect for refreshing summer drinks.</p>
+                        <p class="fs-5 text-success fw-bold mb-3">₹900 per dozen</p>
+                        <a href="{{ url_for('products') }}?search=payri" class="btn btn-success w-100">Order Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rajapuri Mango Card -->
+            <div class="col-md-4">
+                <div class="card available-mango-card h-100 border-0 shadow">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='images/rajapuri mango.jpg') }}" class="card-img-top rounded-top" alt="Rajapuri Mango">
+                        <div class="badge bg-success position-absolute px-3 py-2" style="top: 15px; right: 15px; font-size: 1rem;">
+                            <i class="fas fa-check-circle me-1"></i> In Season
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h3 class="card-title fw-bold mb-2">Rajapuri Mangoes</h3>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <p class="card-text">Large-sized Rajapuri mangoes with rich golden pulp. Great for milkshakes and desserts.</p>
+                        <p class="fs-5 text-success fw-bold mb-3">₹850 per dozen</p>
+                        <a href="{{ url_for('products') }}?search=rajapuri" class="btn btn-success w-100">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-success">Taste the Sweetness of Nature</h1>
+                <p class="lead">Experience the finest mangoes from across India, delivered fresh to your doorstep.</p>
+                <p class="mb-4">We source directly from farmers to ensure the highest quality and freshness. Our mangoes are handpicked, carefully packed, and delivered with love.</p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('products') }}" class="btn btn-success btn-lg px-4">Shop Now</a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-success btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <img src="{{ url_for('static', filename='images/hero-mango.jpg') }}" alt="Fresh Mangoes" class="img-fluid rounded shadow" onerror="this.src='https://via.placeholder.com/600x400?text=Delicious+Mangoes'">
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="py-5">
+        <h2 class="text-center mb-4">Explore Mango Varieties</h2>
+        <div class="row">
+            {% for category in categories[:4] %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text small">{{ category.description }}</p>
+                        <a href="{{ url_for('products', category=category.id) }}" class="btn btn-sm btn-outline-success">View Products</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('products') }}" class="btn btn-success">View All Varieties</a>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="py-5 bg-light rounded">
+        <div class="container">
+            <h2 class="text-center mb-4">Featured Products</h2>
+            <div class="row">
+                {% for product in featured_products %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 product-card">
+                        <img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/300x200?text=Mango+Image'">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text small">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                            <p class="card-text fw-bold text-success">₹{{ product.price }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-outline-success w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="py-5">
+        <h2 class="text-center mb-4">Why Choose Us</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-success bg-opacity-10 p-3 rounded-circle mb-3 mx-auto" style="width: 70px; height: 70px;">
+                            <i class="fas fa-leaf text-success fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Farm Fresh</h5>
+                        <p class="card-text">We source our mangoes directly from farms to ensure freshness and quality.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-success bg-opacity-10 p-3 rounded-circle mb-3 mx-auto" style="width: 70px; height: 70px;">
+                            <i class="fas fa-truck text-success fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Fast Delivery</h5>
+                        <p class="card-text">We deliver across India within 2-3 business days to ensure mangoes reach you fresh.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-success bg-opacity-10 p-3 rounded-circle mb-3 mx-auto" style="width: 70px; height: 70px;">
+                            <i class="fas fa-award text-success fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Premium Quality</h5>
+                        <p class="card-text">We guarantee the best quality mangoes or your money back.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5 bg-light rounded">
+        <h2 class="text-center mb-4">What Our Customers Say</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"The Alphonso mangoes I ordered were absolutely delicious! They were perfectly ripe and sweet. Will definitely order again."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Rajesh Sharma</h6>
+                                <small class="text-muted">Delhi</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"Fast delivery and excellent packaging. The mangoes were fresh and juicy. My family loved them. Thank you for the great service!"</p>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Priynshu Patel</h6>
+                                <small class="text-muted">Mumbai</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"I ordered a mix of different varieties and they were all amazing. The Kesar mangoes were my favorite. Will be ordering more soon!"</p>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Aman Reddy</h6>
+                                <small class="text-muted">Bangalore</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4 text-center">
+                        <h3>Subscribe to Our Newsletter</h3>
+                        <p class="text-muted">Get updates on new mango arrivals, seasonal offers, and exclusive discounts.</p>
+                        <form class="row g-3 justify-content-center">
+                            <div class="col-md-8">
+                                <input type="email" class="form-control" placeholder="Enter your email">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success w-100">Subscribe</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %} 

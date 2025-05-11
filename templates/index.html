@@ -1,0 +1,745 @@
+{% extends "base.html" %}
+
+{% block title %}Fresh Mangoes Online{% endblock %}
+
+{% block styles %}
+<!-- AOS Animation Library -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+    /* Hero Section with Parallax */
+    .hero-parallax {
+        position: relative;
+        height: 100vh;
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ url_for("static", filename="images/mangos.jpg") }}');
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-top: -80px; /* Adjust for navbar */
+    }
+
+    .parallax-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Pulse Button Animation */
+    .pulse-btn {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        padding: 2rem;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba(25, 135, 84, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Seasonal Badge */
+    .seasonal-badge {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: bold;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    }
+
+    /* Feature List */
+    .feature-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .feature-list li {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    /* Variety Showcase */
+    .variety-slider {
+        overflow: hidden;
+    }
+
+    .variety-track {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .variety-item {
+        flex: 0 0 280px;
+    }
+
+    .variety-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .variety-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+
+    .variety-img-container {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .variety-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .variety-card:hover .variety-img-container img {
+        transform: scale(1.1);
+    }
+
+    .variety-rating {
+        font-size: 0.9rem;
+    }
+
+    .variety-origin {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    /* Testimonial Section */
+    .testimonial-card {
+        border-radius: 15px;
+        border: none;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+
+    .testimonial-rating {
+        color: #ffc107;
+    }
+
+    .testimonial-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for("static", filename="images/cta-bg.jpg") }}');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 5rem 0;
+    }
+
+    .cta-input {
+        border-radius: 50px 0 0 50px;
+        padding: 0.75rem 1.5rem;
+        border: none;
+    }
+
+    .cta-btn {
+        border-radius: 0 50px 50px 0;
+        padding: 0.75rem 1.5rem;
+    }
+
+    /* Blog Section */
+    .blog-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+
+    .blog-img-container {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .blog-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .blog-card:hover .blog-img-container img {
+        transform: scale(1.1);
+    }
+
+    .blog-category {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Gallery Section */
+    .gallery-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 200px;
+        grid-gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+    
+    .gallery-item-1 {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+    
+    .gallery-item-4 {
+        grid-column: span 2;
+    }
+    
+    .gallery-item-title {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-item-title {
+        opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .gallery-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .gallery-item-1, .gallery-item-4 {
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+    }
+
+    /* Hover Scale Effect for Cards */
+    .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Backdrop blur effect */
+    .backdrop-blur {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Animations */
+    @media (max-width: 768px) {
+        .hero-parallax {
+            height: 70vh;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Parallax Effect -->
+<section class="hero-parallax">
+    <div class="parallax-container">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                    <h1 class="display-3 fw-bold text-white mb-4">Sweet, Juicy & Fresh Mangoes</h1>
+                    <p class="lead text-white mb-4">Experience the authentic taste of premium mangoes from the finest orchards in India, delivered fresh to your doorstep.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#currently-available" class="btn btn-lg btn-warning rounded-pill fw-bold px-4 pulse-btn">
+                            <i class="fas fa-shopping-basket me-2"></i>Shop Now
+                        </a>
+                        <a href="#about-section" class="btn btn-lg btn-outline-light rounded-pill fw-bold px-4">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 position-relative" data-aos="fade-left" data-aos-delay="300">
+                    <div class="backdrop-blur p-4 rounded-3 text-white">
+                        <h3 class="fw-bold mb-3 text-warning">The Mango Delight Promise</h3>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                                <span>100% Natural & Chemical-Free Mangoes</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                                <span>Delivered Within 24-48 Hours of Harvest</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                                <span>Carefully Handpicked & Naturally Ripened</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-warning me-3 fa-lg"></i>
+                                <span>Satisfaction Guaranteed or Money Back</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Season Update Badge -->
+<div class="container mt-n4 mb-4 position-relative" style="z-index: 10;">
+    <div class="d-flex justify-content-center">
+        <div class="badge bg-warning text-dark px-4 py-2 rounded-pill fw-bold fs-5 shadow-sm">
+            <i class="fas fa-calendar-alt me-2"></i> Season Update: All Premium Mango Varieties Now Available!
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5 bg-light" id="about-section">
+    <div class="container">
+        <div class="row g-4 justify-content-center text-center">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-leaf fa-3x text-success"></i>
+                    </div>
+                    <h3>Fresh from Orchards</h3>
+                    <p>Our mangoes are harvested at peak ripeness and delivered directly from farms to your home.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-truck fa-3x text-success"></i>
+                    </div>
+                    <h3>Fast Delivery</h3>
+                    <p>We ensure quick delivery to preserve the freshness and flavor of our premium mangoes.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-award fa-3x text-success"></i>
+                    </div>
+                    <h3>Premium Quality</h3>
+                    <p>We source only the finest mangoes from selected farms known for their quality.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Availability Banner -->
+<section class="py-4">
+    <div class="container">
+        <div class="alert alert-success border-0 shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <div class="me-4 text-success">
+                    <i class="fas fa-check-circle fa-3x"></i>
+                </div>
+                <div>
+                    <h4 class="alert-heading mb-1">All Mango Varieties Now Available!</h4>
+                    <p class="mb-0">Great news! All our premium mango varieties including Alphonso, Kesar, Rajapuri, and Payri are now in stock. Freshly harvested and ready to be delivered to your doorstep. Limited stock available - order now!</p>
+                </div>
+                <div class="ms-auto">
+                    <a href="#currently-available" class="btn btn-success rounded-pill px-4">View Varieties</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seasonal Highlight -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="position-relative">
+                    <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" alt="Alphonso Mangoes" class="img-fluid rounded-3 shadow-lg">
+                    <div class="seasonal-badge">
+                        <span>Season's Best</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <h2 class="display-5 mb-4 fw-bold">Alphonso: <span class="text-warning">The King of Mangoes</span></h2>
+                <p class="lead mb-4">Experience the unmatched taste of Ratnagiri Alphonso mangoes, known for their rich flavor, vibrant color, and aromatic sweetness.</p>
+                <ul class="feature-list mb-4">
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Naturally ripened with no chemicals</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Handpicked from the best orchards</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Limited seasonal availability</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Premium gifting option</li>
+                </ul>
+                <a href="{{ url_for('products') }}" class="btn btn-warning btn-lg rounded-pill fw-bold">
+                    <i class="fas fa-crown me-2"></i>Order Premium Alphonso
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Variety Showcase -->
+<section class="py-5 bg-light" id="available-mangoes">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">Explore Our <span class="text-warning">Mango Varieties</span></h2>
+            <p class="lead">Each variety offers a unique taste experience. Discover your favorite!</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="variety-slider position-relative">
+                    <div class="overflow-hidden">
+                        <div class="d-flex flex-nowrap variety-track">
+                            <div class="variety-item" data-aos="fade-up" data-aos-delay="100">
+                                <div class="card h-100 border-0 shadow variety-card">
+                                    <div class="variety-img-container">
+                                        <img src="{{ url_for('static', filename='images/alphanso.jpg') }}" class="card-img-top" alt="Alphonso Mango">
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title fw-bold">Alphonso</h5>
+                                        <div class="variety-rating text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <p class="variety-origin">Origin: Ratnagiri, Maharashtra</p>
+                                        <span class="badge bg-success px-2 py-1"><i class="fas fa-check-circle me-1"></i> Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="variety-item" data-aos="fade-up" data-aos-delay="200">
+                                <div class="card h-100 border-0 shadow variety-card">
+                                    <div class="variety-img-container">
+                                        <img src="{{ url_for('static', filename='images/kesar mango.webp') }}" class="card-img-top" alt="Kesar Mango">
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title fw-bold">Kesar</h5>
+                                        <div class="variety-rating text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </div>
+                                        <p class="variety-origin">Origin: Gujarat</p>
+                                        <span class="badge bg-success px-2 py-1"><i class="fas fa-check-circle me-1"></i> Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="variety-item" data-aos="fade-up" data-aos-delay="300">
+                                <div class="card h-100 border-0 shadow variety-card">
+                                    <div class="variety-img-container">
+                                        <img src="{{ url_for('static', filename='images/rajapuri mango.jpg') }}" class="card-img-top" alt="Rajapuri Mango">
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title fw-bold">Rajapuri</h5>
+                                        <div class="variety-rating text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                        <p class="variety-origin">Origin: South India</p>
+                                        <span class="badge bg-success px-2 py-1"><i class="fas fa-check-circle me-1"></i> Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="variety-item" data-aos="fade-up" data-aos-delay="400">
+                                <div class="card h-100 border-0 shadow variety-card">
+                                    <div class="variety-img-container">
+                                        <img src="{{ url_for('static', filename='images/mango.jpg') }}" class="card-img-top" alt="Banganapalli Mango">
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title fw-bold">Banganapalli</h5>
+                                        <div class="variety-rating text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                        <p class="variety-origin">Origin: Andhra Pradesh</p>
+                                        <span class="badge bg-success px-2 py-1"><i class="fas fa-check-circle me-1"></i> Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mango Photo Gallery -->
+<section class="py-5" id="mango-gallery">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">Mango <span class="text-warning">Photo Gallery</span></h2>
+            <p class="lead">Feast your eyes on our stunning collection of mangoes in all their glory</p>
+        </div>
+        
+        <div class="gallery-container" data-aos="fade-up">
+            <div class="gallery-item gallery-item-1">
+                <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" alt="Alphonso Mangoes">
+                <div class="gallery-item-title">Premium Alphonso Mangoes</div>
+            </div>
+            <div class="gallery-item gallery-item-2">
+                <img src="{{ url_for('static', filename='images/kesar mango.webp') }}" alt="Kesar Mangoes">
+                <div class="gallery-item-title">Sweet Kesar Mangoes</div>
+            </div>
+            <div class="gallery-item gallery-item-3">
+                <img src="{{ url_for('static', filename='images/mango.jpg') }}" alt="Fresh Mangoes">
+                <div class="gallery-item-title">Fresh Banganapalli</div>
+            </div>
+            <div class="gallery-item gallery-item-4">
+                <img src="{{ url_for('static', filename='images/mangos.jpg') }}" alt="Mango Collection">
+                <div class="gallery-item-title">Assorted Mango Collection</div>
+            </div>
+            <div class="gallery-item gallery-item-5">
+                <img src="{{ url_for('static', filename='images/rajapuri mango.jpg') }}" alt="Rajapuri Mangoes">
+                <div class="gallery-item-title">Juicy Rajapuri</div>
+            </div>
+            <div class="gallery-item gallery-item-6">
+                <img src="{{ url_for('static', filename='images/unripe mango.jpg') }}" alt="Unripe Mangoes">
+                <div class="gallery-item-title">Fresh From Farm</div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('products') }}" class="btn btn-warning btn-lg rounded-pill fw-bold">
+                <i class="fas fa-shopping-cart me-2"></i>Shop Our Mango Collection
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Currently Available Mangoes Section -->
+<section class="py-5 bg-light" id="currently-available">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">Currently <span class="text-warning">Available Mangoes</span></h2>
+            <p class="lead">Fresh stock just arrived! Order now while supplies last</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Alphonso Card -->
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm hover-scale">
+                    <div class="position-relative">
+                        <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">Premium</span>
+                        <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" class="card-img-top" alt="Alphonso Mangoes" style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <span class="badge bg-success px-3 py-2"><i class="fas fa-boxes me-1"></i> IN STOCK</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold mb-2">Alphonso Mangoes</h4>
+                        <p class="text-muted mb-1">Origin: Ratnagiri, Maharashtra</p>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3 class="text-success mb-3">₹1500<span class="fs-6">/dozen</span></h3>
+                        <p class="card-text mb-3">The King of Mangoes with unmatched taste and aroma. Limited stock!</p>
+                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kesar Card -->
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm hover-scale">
+                    <div class="position-relative">
+                        <span class="badge bg-success position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">Bestseller</span>
+                        <img src="{{ url_for('static', filename='images/kesar mango.webp') }}" class="card-img-top" alt="Kesar Mangoes" style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <span class="badge bg-success px-3 py-2"><i class="fas fa-boxes me-1"></i> IN STOCK</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold mb-2">Kesar Mangoes</h4>
+                        <p class="text-muted mb-1">Origin: Gujarat</p>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h3 class="text-success mb-3">₹1200<span class="fs-6">/dozen</span></h3>
+                        <p class="card-text mb-3">Sweet and aromatic mangoes with saffron-colored pulp. Fresh stock!</p>
+                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rajapuri Card -->
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 border-0 shadow-sm hover-scale">
+                    <div class="position-relative">
+                        <span class="badge bg-primary position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">Great Value</span>
+                        <img src="{{ url_for('static', filename='images/rajapuri mango.jpg') }}" class="card-img-top" alt="Rajapuri Mangoes" style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <span class="badge bg-success px-3 py-2"><i class="fas fa-boxes me-1"></i> IN STOCK</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold mb-2">Rajapuri Mangoes</h4>
+                        <p class="text-muted mb-1">Origin: South India</p>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <h3 class="text-success mb-3">₹1000<span class="fs-6">/dozen</span></h3>
+                        <p class="card-text mb-3">Large, juicy mangoes perfect for desserts and milkshakes.</p>
+                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payri Card -->
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="card h-100 border-0 shadow-sm hover-scale">
+                    <div class="position-relative">
+                        <span class="badge bg-info position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">New Arrival</span>
+                        <img src="{{ url_for('static', filename='images/mango.jpg') }}" class="card-img-top" alt="Payri Mangoes" style="height: 200px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <span class="badge bg-success px-3 py-2"><i class="fas fa-boxes me-1"></i> IN STOCK</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title fw-bold mb-2">Payri Mangoes</h4>
+                        <p class="text-muted mb-1">Origin: Maharashtra</p>
+                        <div class="text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <h3 class="text-success mb-3">₹1200<span class="fs-6">/dozen</span></h3>
+                        <p class="card-text mb-3">Sweet and tangy flavor, perfect for making aamras and smoothies.</p>
+                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <p class="text-muted mb-4"><i class="fas fa-info-circle me-2"></i>Free shipping on orders above ₹2000. Order before 2 PM for next-day delivery.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-lg btn-success rounded-pill px-5 py-3 fw-bold">
+                <i class="fas fa-shopping-basket me-2"></i>View All Varieties
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- AOS Animation Library -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        AOS.init({
+            once: true,
+            duration: 800
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Mango Delight{% endblock %}
+
+{% block styles %}
+<style>
+    /* About Hero Section */
+    .hero-section {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Feature Icons */
+    .feature-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    /* Team Cards */
+    .testimonial-card {
+        border-radius: 15px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Social Icons */
+    .social-icons a {
+        display: inline-flex;
+        width: 40px;
+        height: 40px;
+        background-color: #198754;
+        color: white;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .social-icons a:hover {
+        background-color: #0d6efd;
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- About Hero Section -->
+<section class="container my-5">
+    <div class="row align-items-center hero-section p-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold mb-4">Our Story</h1>
+            <p class="lead mb-4">At Mango Delight, we're passionate about bringing the finest mangoes from Indian orchards directly to your home.</p>
+            <p>Founded in 2015, our journey began with a simple mission: to share the authentic taste of premium Indian mangoes with mango enthusiasts across the country.</p>
+        </div>
+        <div class="col-md-6">
+            <img src="{{ url_for('static', filename='images/about-hero.jpg') }}" alt="Mango Orchard" class="img-fluid rounded">
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission Section -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-5">
+            <h2>Our Mission</h2>
+            <p class="lead">To deliver the juiciest, freshest mangoes while supporting sustainable farming practices.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon text-success mb-3">
+                    <i class="fas fa-leaf fa-3x"></i>
+                </div>
+                <h3>Sustainable Farming</h3>
+                <p>We work directly with farmers who follow sustainable agricultural practices, ensuring minimal environmental impact.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon text-success mb-3">
+                    <i class="fas fa-truck-fast fa-3x"></i>
+                </div>
+                <h3>Farm to Table</h3>
+                <p>Our direct farm-to-table approach ensures mangoes reach you at peak freshness, often within 24-48 hours of harvest.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon text-success mb-3">
+                    <i class="fas fa-handshake fa-3x"></i>
+                </div>
+                <h3>Fair Trade</h3>
+                <p>We believe in fair compensation for farmers. By eliminating middlemen, we ensure farmers get better prices for their produce.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team Section -->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-5">
+            <h2>Our Team</h2>
+            <p class="lead">Meet the passionate people who make it all possible.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='images/team1.jpg') }}" alt="Team Member" class="rounded-circle mb-3" width="150" height="150">
+                    <h5>Rajesh Sharma</h5>
+                    <p class="text-muted">Founder & CEO</p>
+                    <p>With over 20 years in the agricultural sector, Rajesh's vision is what drives Mango Delight forward.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='images/team2.jpg') }}" alt="Team Member" class="rounded-circle mb-3" width="150" height="150">
+                    <h5>Priya Patel</h5>
+                    <p class="text-muted">Head of Operations</p>
+                    <p>Priya ensures that every mango we deliver meets our strict quality standards and reaches you in perfect condition.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card testimonial-card h-100">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='images/team3.jpg') }}" alt="Team Member" class="rounded-circle mb-3" width="150" height="150">
+                    <h5>Anil Kumar</h5>
+                    <p class="text-muted">Chief Agriculturist</p>
+                    <p>Anil works directly with our network of farmers, implementing sustainable practices and ensuring top-quality harvests.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

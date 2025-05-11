@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Mango Delight{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="contact-hero position-relative">
+    <div class="hero-overlay"></div>
+    <div class="container py-5 position-relative z-3">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-2 mb-3">
+                    <i class="fas fa-headset me-2"></i>24/7 Support
+                </span>
+                <h1 class="display-4 fw-bold mb-3">Contact <span class="text-warning">Us</span></h1>
+                <p class="lead mb-4">Our team is ready to assist you with any needs. We're always eager to hear your suggestions, questions or feedback.</p>
+                <div class="quick-contact-buttons">
+                    <a href="tel:+917398301184" class="btn btn-light btn-lg rounded-pill shadow-sm me-2 mb-2">
+                        <i class="fas fa-phone text-success me-2"></i>+91 7398301184
+                    </a>
+                    <a href="mailto:somilpandey05@gmail.com" class="btn btn-light btn-lg rounded-pill shadow-sm me-2 mb-2">
+                        <i class="fas fa-envelope text-success me-2"></i>somilpandey05@gmail.com
+                    </a>
+                    <a href="https://wa.me/917398301184" target="_blank" class="btn btn-success btn-lg rounded-pill shadow-sm mb-2">
+                        <i class="fab fa-whatsapp me-2"></i>Contact on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wave-shape">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
+    </div>
+</div>
+
+<!-- Main Contact Section -->
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Contact Form -->
+        <div class="col-lg-7 mb-4" data-aos="fade-right" data-aos-delay="100">
+            <div class="card border-0 shadow-lg contact-form-card h-100">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="contact-form-icon bg-success-subtle me-3">
+                            <i class="fas fa-paper-plane text-success"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">Send Us a Message</h3>
+                            <p class="text-muted mb-0">You'll get a response within 24 hours</p>
+                        </div>
+                    </div>
+                    <form action="{{ url_for('contact') }}" method="POST" id="contactForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control custom-input" id="name" name="name" placeholder="Your Name" required>
+                                    <label for="name"><i class="fas fa-user text-muted me-2"></i>Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control custom-input" id="email" name="email" placeholder="Email Address" required>
+                                    <label for="email"><i class="fas fa-envelope text-muted me-2"></i>Email Address</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="tel" class="form-control custom-input" id="phone" name="phone" placeholder="Phone Number">
+                                    <label for="phone"><i class="fas fa-phone text-muted me-2"></i>Phone Number</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select custom-input" id="subject" name="subject" required>
+                                        <option value="" selected disabled>Please select a subject</option>
+                                        <option value="Order Inquiry">Order Inquiry</option>
+                                        <option value="Product Question">Product Question</option>
+                                        <option value="Shipping Question">Shipping Question</option>
+                                        <option value="Bulk Order">Bulk Order</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <label for="subject"><i class="fas fa-tag text-muted me-2"></i>Subject</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control custom-input" id="message" name="message" placeholder="Write your message here" style="height: 150px;" required></textarea>
+                                    <label for="message"><i class="fas fa-comment text-muted me-2"></i>Your Message</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-success btn-lg rounded-pill contact-submit-btn">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="col-lg-5" data-aos="fade-left" data-aos-delay="100">
+            <div class="card border-0 shadow-lg contact-info-card h-100">
+                <div class="card-body p-4 p-lg-5">
+                    <h3 class="mb-4 border-start border-success border-4 ps-3">Contact Information</h3>
+                    <div class="contact-info">
+                        <div class="contact-item d-flex mb-4">
+                            <div class="contact-icon bg-success-subtle me-3">
+                                <i class="fas fa-map-marker-alt text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Store Address</h5>
+                                <p class="mb-0">Building no.26, 1 lane old hanuman gali, Mumbai, Maharashtra 400002</p>
+                            </div>
+                        </div>
+                        <div class="contact-item d-flex mb-4">
+                            <div class="contact-icon bg-success-subtle me-3">
+                                <i class="fas fa-phone text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Phone Numbers</h5>
+                                <p class="mb-0">+91 7398301184</p>
+                                <p class="mb-0">+91 8291402349 (Customer Support)</p>
+                            </div>
+                        </div>
+                        <div class="contact-item d-flex mb-4">
+                            <div class="contact-icon bg-success-subtle me-3">
+                                <i class="fas fa-envelope text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Email</h5>
+                                <p class="mb-0">somilpandey05@gmail.com</p>
+                                <!-- <p class="mb-0">support@mangodelight.com</p> -->
+                            </div>
+                        </div>
+                        <div class="contact-item d-flex mb-4">
+                            <div class="contact-icon bg-success-subtle me-3">
+                                <i class="fas fa-clock text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Working Hours</h5>
+                                <p class="mb-0">Monday - Sunday: 9:00 AM - 8:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <h4 class="mb-3 border-start border-success border-4 ps-3">Follow Us</h4>
+                        <!-- <div class="social-links d-flex gap-3">
+                            <a href="#" class="social-link facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link youtube" title="YouTube"><i class="fab fa-youtube"></i></a>-->
+                            <a href="#" class="social-link whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="row mt-5" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg mb-5 map-card">
+                <div class="card-body p-0">
+                    <div class="d-flex align-items-center p-4">
+                        <div class="contact-icon bg-success-subtle me-3">
+                            <i class="fas fa-map text-success"></i>
+                        </div>
+                        <h3 class="mb-0">Our Location</h3>
+                    </div>
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.0325494988356!2d72.81976147592333!3d19.0101619537066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8e123f8d27b%3A0x64bd1ee7f7fc347f!2sMumbai%2C%20Maharashtra%20400002!5e0!3m2!1sen!2sin!4v1690372955899!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="row mt-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="col-12 text-center mb-4">
+            <h2 class="section-title">Frequently Asked <span class="text-warning">Questions</span></h2>
+            <p class="lead">We have answers to your questions</p>
+        </div>
+        
+        <div class="col-lg-10 mx-auto">
+            <div class="accordion faq-accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fas fa-question-circle me-2 text-success"></i>How do you ship mangoes to ensure freshness?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="faqOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            We use special thermocol packaging that keeps the mangoes safe and controls the temperature. Our mangoes are delivered within 2-3 days, and we also offer express shipping options.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="fas fa-question-circle me-2 text-success"></i>Do you deliver across all of India?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faqTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, we deliver throughout India. However, delivery to some remote areas may take an additional 1-2 days. In metro cities, we also offer next-day delivery.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            <i class="fas fa-question-circle me-2 text-success"></i>Do you offer special discounts for bulk orders or corporate gifts?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faqThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Absolutely! We offer special packages and discounts for bulk orders and corporate gifting. You can contact us via email or phone, and our team will prepare a custom offer according to your requirements.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            <i class="fas fa-question-circle me-2 text-success"></i>How can I track my order?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="faqFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            After your order is confirmed, you'll receive an email with a tracking number. You can also track your order in the "My Account" section of our website, or call us directly for updates.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            <i class="fas fa-question-circle me-2 text-success"></i>Do you have a return and refund policy?
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="faqFive" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, if you're not satisfied with the quality of the mangoes received, you can notify us within 24 hours of delivery. We'll provide you with a replacement or full refund. However, as these are food products, we'll require photo evidence to support your claim.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Contact Hero Section */
+    .contact-hero {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for("static", filename="images/contact-hero.jpg") }}');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 6rem 0 8rem;
+        margin-bottom: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(25,135,84,0.8), rgba(25,135,84,0.4));
+        z-index: 1;
+    }
+    
+    .wave-shape {
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        z-index: 2;
+    }
+    
+    /* Form Styling */
+    .contact-form-card, .contact-info-card, .map-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .contact-form-card:hover, .contact-info-card:hover, .map-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+    }
+    
+    .contact-form-icon, .contact-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-item:hover .contact-icon {
+        transform: scale(1.1);
+    }
+    
+    .custom-input {
+        border: none;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        padding: 1.2rem 1rem 0.6rem;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-input:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .form-floating label {
+        padding-left: 1rem;
+    }
+    
+    .contact-submit-btn {
+        padding: 12px 30px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-submit-btn:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+    }
+    
+    .contact-submit-btn:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background-color: #157347;
+        transition: all 0.3s;
+        z-index: -1;
+    }
+    
+    .contact-submit-btn:hover:before {
+        width: 100%;
+    }
+    
+    /* Social Links */
+    .social-links {
+        flex-wrap: wrap;
+    }
+    
+    .social-link {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        margin-right: 10px;
+    }
+    
+    .social-link:hover {
+        transform: translateY(-5px) rotate(10deg);
+        color: white;
+    }
+    
+    .facebook {
+        background-color: #3b5998;
+    }
+    
+    .twitter {
+        background-color: #1da1f2;
+    }
+    
+    .instagram {
+        background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+    }
+    
+    .youtube {
+        background-color: #ff0000;
+    }
+    
+    .whatsapp {
+        background-color: #25d366;
+    }
+    
+    /* Map Container */
+    .map-container {
+        overflow: hidden;
+        border-radius: 0 0 15px 15px;
+        filter: grayscale(20%);
+        transition: all 0.3s ease;
+    }
+    
+    .map-container:hover {
+        filter: grayscale(0%);
+    }
+    
+    /* FAQ Styling */
+    .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 3px;
+        background-color: var(--primary-color);
+    }
+    
+    .faq-accordion {
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .accordion-item {
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .accordion-item:last-child {
+        border-bottom: none;
+    }
+    
+    .accordion-button {
+        padding: 1.25rem 1.5rem;
+        font-weight: 600;
+        background-color: #fff;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(25, 135, 84, 0.08);
+        color: var(--primary-color);
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,0.1);
+    }
+    
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23198754'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+    
+    .accordion-body {
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+    }
+    
+    /* Quick Contact Buttons */
+    .quick-contact-buttons {
+        margin-top: 2rem;
+    }
+    
+    .quick-contact-buttons .btn {
+        font-weight: 500;
+        padding: 12px 25px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.3s ease;
+    }
+    
+    .quick-contact-buttons .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    @media (max-width: 768px) {
+        .contact-hero {
+            padding: 4rem 0 6rem;
+        }
+        
+        .contact-form-icon, .contact-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                once: true,
+                duration: 800,
+                offset: 100
+            });
+        }
+        
+        // Add active class to current nav link
+        const contactLink = document.querySelector('a[href="{{ url_for("contact") }}"]');
+        if (contactLink) contactLink.classList.add('active');
+        
+        // Form validation and submission
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            // Add floating label animation
+            const formInputs = contactForm.querySelectorAll('.form-control, .form-select');
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('focused');
+                    }
+                });
+                
+                // Check initial state
+                if (input.value) {
+                    input.parentElement.classList.add('focused');
+                }
+            });
+            
+            // Form submission
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                let isValid = true;
+                const formInputs = contactForm.querySelectorAll('[required]');
+                
+                formInputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('is-invalid');
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    }
+                });
+                
+                if (isValid) {
+                    // In a real implementation, you would send the form data to the server
+                    // For this demo, we'll just show a success message
+                    const formData = new FormData(contactForm);
+                    const formObject = Object.fromEntries(formData.entries());
+                    
+                    // Show success message
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success mt-3 d-flex align-items-center';
+                    successAlert.innerHTML = '<i class="fas fa-check-circle me-2 fs-4"></i><div>Your message has been sent successfully! We will contact you soon.</div>';
+                    
+                    // Clear form and add success message with animation
+                    formInputs.forEach(input => input.classList.remove('is-valid'));
+                    successAlert.style.opacity = '0';
+                    contactForm.appendChild(successAlert);
+                    
+                    // Animate in
+                    setTimeout(() => {
+                        successAlert.style.transition = 'opacity 0.5s ease';
+                        successAlert.style.opacity = '1';
+                    }, 10);
+                    
+                    contactForm.reset();
+                    formInputs.forEach(input => {
+                        input.parentElement.classList.remove('focused');
+                    });
+                    
+                    // Remove the alert after 5 seconds
+                    setTimeout(() => {
+                        successAlert.style.opacity = '0';
+                        setTimeout(() => successAlert.remove(), 500);
+                    }, 5000);
+                }
+            });
+        }
+        
+        // Add animation to contact info items
+        const contactItems = document.querySelectorAll('.contact-item');
+        contactItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 300 + (index * 150));
+        });
+    });
+</script>
+{% endblock %}
+ 

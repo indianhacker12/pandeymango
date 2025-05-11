@@ -1,0 +1,492 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block header %}Settings{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Settings Navigation -->
+    <div class="col-md-3">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                        <i class="fas fa-cog me-2"></i> General Settings
+                    </a>
+                    <a href="#store" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-store me-2"></i> Store Information
+                    </a>
+                    <a href="#payment" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-credit-card me-2"></i> Payment Methods
+                    </a>
+                    <a href="#shipping" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-truck me-2"></i> Shipping Options
+                    </a>
+                    <a href="#tax" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-percent me-2"></i> Tax Settings
+                    </a>
+                    <a href="#email" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-envelope me-2"></i> Email Templates
+                    </a>
+                    <a href="#backup" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="fas fa-database me-2"></i> Backup & Restore
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Content -->
+    <div class="col-md-9">
+        <div class="tab-content">
+            <!-- General Settings -->
+            <div class="tab-pane fade show active" id="general">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">General Settings</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                            <input type="hidden" name="section" value="general">
+                            <div class="row mb-3">
+                                <label for="siteName" class="col-sm-3 col-form-label">Site Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="siteName" name="site_name" value="{{ settings.site_name }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="tagline" class="col-sm-3 col-form-label">Tagline</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="tagline" name="tagline" value="{{ settings.tagline }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="siteLogo" class="col-sm-3 col-form-label">Site Logo</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" id="siteLogo" name="site_logo">
+                                    {% if settings.site_logo %}
+                                    <div class="mt-2">
+                                        <img src="{{ settings.site_logo }}" alt="Site Logo" height="50">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="favicon" class="col-sm-3 col-form-label">Favicon</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" id="favicon" name="favicon">
+                                    {% if settings.favicon %}
+                                    <div class="mt-2">
+                                        <img src="{{ settings.favicon }}" alt="Favicon" height="32">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="primaryColor" class="col-sm-3 col-form-label">Primary Color</label>
+                                <div class="col-sm-9">
+                                    <input type="color" class="form-control form-control-color" id="primaryColor" name="primary_color" value="{{ settings.primary_color }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="footerText" class="col-sm-3 col-form-label">Footer Text</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" id="footerText" name="footer_text" rows="2">{{ settings.footer_text }}</textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-success">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Store Information -->
+            <div class="tab-pane fade" id="store">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">Store Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                            <input type="hidden" name="section" value="store">
+                            <div class="row mb-3">
+                                <label for="storeName" class="col-sm-3 col-form-label">Store Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="storeName" name="store_name" value="{{ settings.store_name }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="storeEmail" class="col-sm-3 col-form-label">Email Address</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" id="storeEmail" name="store_email" value="{{ settings.store_email }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="storePhone" class="col-sm-3 col-form-label">Phone Number</label>
+                                <div class="col-sm-9">
+                                    <input type="tel" class="form-control" id="storePhone" name="store_phone" value="{{ settings.store_phone }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="storeAddress" class="col-sm-3 col-form-label">Address</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" id="storeAddress" name="store_address" rows="3">{{ settings.store_address }}</textarea>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="currency" class="col-sm-3 col-form-label">Currency</label>
+                                <div class="col-sm-9">
+                                    <select class="form-select" id="currency" name="currency">
+                                        <option value="₹" {% if settings.currency == '₹' %}selected{% endif %}>Indian Rupee (₹)</option>
+                                        <option value="$" {% if settings.currency == '$' %}selected{% endif %}>US Dollar ($)</option>
+                                        <option value="€" {% if settings.currency == '€' %}selected{% endif %}>Euro (€)</option>
+                                        <option value="£" {% if settings.currency == '£' %}selected{% endif %}>British Pound (£)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-success">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods -->
+            <div class="tab-pane fade" id="payment">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">Payment Methods</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                            <input type="hidden" name="section" value="payment">
+                            
+                            <!-- Cash on Delivery -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="enableCOD" name="cod_enabled" {% if settings.cod_enabled %}checked{% endif %}>
+                                        <label class="form-check-label fw-bold" for="enableCOD">Cash on Delivery</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="codTitle" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="codTitle" name="cod_title" value="{{ settings.cod_title }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="codDescription" class="form-label">Description</label>
+                                        <textarea class="form-control" id="codDescription" name="cod_description" rows="2">{{ settings.cod_description }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Razorpay -->
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="enableRazorpay" name="razorpay_enabled" {% if settings.razorpay_enabled %}checked{% endif %}>
+                                        <label class="form-check-label fw-bold" for="enableRazorpay">Razorpay</label>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="razorpayTitle" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="razorpayTitle" name="razorpay_title" value="{{ settings.razorpay_title }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="razorpayDescription" class="form-label">Description</label>
+                                        <textarea class="form-control" id="razorpayDescription" name="razorpay_description" rows="2">{{ settings.razorpay_description }}</textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="razorpayKey" class="form-label">Key ID</label>
+                                            <input type="text" class="form-control" id="razorpayKey" name="razorpay_key_id" value="{{ settings.razorpay_key_id }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="razorpaySecret" class="form-label">Key Secret</label>
+                                            <input type="password" class="form-control" id="razorpaySecret" name="razorpay_key_secret" value="{{ settings.razorpay_key_secret }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Shipping Options -->
+            <div class="tab-pane fade" id="shipping">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 fw-bold">Shipping Options</h6>
+                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addShippingModal">
+                            <i class="fas fa-plus me-1"></i> Add Option
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-admin mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Cost</th>
+                                        <th>Free Above</th>
+                                        <th>Active</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for shipping in shipping_options %}
+                                    <tr>
+                                        <td>{{ shipping.name }}</td>
+                                        <td>{{ shipping.description }}</td>
+                                        <td>₹{{ shipping.cost }}</td>
+                                        <td>{% if shipping.free_above %}₹{{ shipping.free_above }}{% else %}N/A{% endif %}</td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" {% if shipping.active %}checked{% endif %} disabled>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editShippingModal{{ shipping.id }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteShippingModal{{ shipping.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tax Settings -->
+            <div class="tab-pane fade" id="tax">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">Tax Settings</h6>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                            <input type="hidden" name="section" value="tax">
+                            <div class="row mb-3">
+                                <label for="taxEnabled" class="col-sm-3 col-form-label">Enable Tax</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" id="taxEnabled" name="tax_enabled" {% if settings.tax_enabled %}checked{% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="taxRate" class="col-sm-3 col-form-label">Tax Rate (%)</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" id="taxRate" name="tax_rate" value="{{ settings.tax_rate }}" min="0" max="100" step="0.01">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="taxIncluded" class="col-sm-3 col-form-label">Prices Include Tax</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" id="taxIncluded" name="prices_include_tax" {% if settings.prices_include_tax %}checked{% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="taxLabel" class="col-sm-3 col-form-label">Tax Label</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="taxLabel" name="tax_label" value="{{ settings.tax_label }}" placeholder="GST">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-success">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Templates -->
+            <div class="tab-pane fade" id="email">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">Email Templates</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="emailTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="order-confirmation-tab" data-bs-toggle="tab" data-bs-target="#order-confirmation" type="button" role="tab">Order Confirmation</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="order-shipped-tab" data-bs-toggle="tab" data-bs-target="#order-shipped" type="button" role="tab">Order Shipped</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="account-created-tab" data-bs-toggle="tab" data-bs-target="#account-created" type="button" role="tab">Account Created</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-3" id="emailTabsContent">
+                            <div class="tab-pane fade show active" id="order-confirmation" role="tabpanel">
+                                <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                                    <input type="hidden" name="section" value="email_template_order_confirmation">
+                                    <div class="mb-3">
+                                        <label for="orderConfirmationSubject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="orderConfirmationSubject" name="order_confirmation_subject" value="{{ settings.order_confirmation_subject }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="orderConfirmationBody" class="form-label">Email Body</label>
+                                        <textarea class="form-control" id="orderConfirmationBody" name="order_confirmation_body" rows="10">{{ settings.order_confirmation_body }}</textarea>
+                                        <div class="form-text">Available variables: {order_id}, {customer_name}, {order_total}, {order_date}, {shipping_address}, {payment_method}</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-success">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="order-shipped" role="tabpanel">
+                                <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                                    <input type="hidden" name="section" value="email_template_order_shipped">
+                                    <div class="mb-3">
+                                        <label for="orderShippedSubject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="orderShippedSubject" name="order_shipped_subject" value="{{ settings.order_shipped_subject }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="orderShippedBody" class="form-label">Email Body</label>
+                                        <textarea class="form-control" id="orderShippedBody" name="order_shipped_body" rows="10">{{ settings.order_shipped_body }}</textarea>
+                                        <div class="form-text">Available variables: {order_id}, {customer_name}, {tracking_number}, {estimated_delivery}, {shipping_method}</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-success">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="account-created" role="tabpanel">
+                                <form action="{{ url_for('admin_update_settings') }}" method="POST">
+                                    <input type="hidden" name="section" value="email_template_account_created">
+                                    <div class="mb-3">
+                                        <label for="accountCreatedSubject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="accountCreatedSubject" name="account_created_subject" value="{{ settings.account_created_subject }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="accountCreatedBody" class="form-label">Email Body</label>
+                                        <textarea class="form-control" id="accountCreatedBody" name="account_created_body" rows="10">{{ settings.account_created_body }}</textarea>
+                                        <div class="form-text">Available variables: {customer_name}, {username}, {login_url}</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-success">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Backup & Restore -->
+            <div class="tab-pane fade" id="backup">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 fw-bold">Backup & Restore</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Create Backup</h5>
+                                        <p class="card-text">Create a backup of your store data including products, orders, customers, and settings.</p>
+                                        <form action="{{ url_for('admin_create_backup') }}" method="POST">
+                                            <div class="mb-3">
+                                                <label for="backupName" class="form-label">Backup Name</label>
+                                                <input type="text" class="form-control" id="backupName" name="backup_name" placeholder="My Backup">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="includeMedia" name="include_media" checked>
+                                                <label class="form-check-label" for="includeMedia">Include Media Files</label>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Create Backup</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Restore Backup</h5>
+                                        <p class="card-text">Restore your store data from a previous backup file.</p>
+                                        <form action="{{ url_for('admin_restore_backup') }}" method="POST" enctype="multipart/form-data">
+                                            <div class="mb-3">
+                                                <label for="backupFile" class="form-label">Backup File</label>
+                                                <input type="file" class="form-control" id="backupFile" name="backup_file">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="confirmRestore" name="confirm_restore">
+                                                <label class="form-check-label" for="confirmRestore">I understand this will overwrite current data</label>
+                                            </div>
+                                            <button type="submit" class="btn btn-warning">Restore Backup</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h6 class="fw-bold mb-3">Backup History</h6>
+                        <div class="table-responsive">
+                            <table class="table table-admin mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Backup Name</th>
+                                        <th>Date</th>
+                                        <th>Size</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for backup in backups %}
+                                    <tr>
+                                        <td>{{ backup.name }}</td>
+                                        <td>{{ backup.date.strftime('%d-%m-%Y %H:%M') }}</td>
+                                        <td>{{ backup.size }}</td>
+                                        <td>{{ backup.type }}</td>
+                                        <td class="text-end">
+                                            <a href="{{ url_for('admin_download_backup', backup_id=backup.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#restoreBackupModal{{ backup.id }}">
+                                                <i class="fas fa-redo-alt"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteBackupModal{{ backup.id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
