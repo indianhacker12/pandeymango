@@ -11,3 +11,4 @@ itsdangerous
 SQLAlchemy
 mysqlclient
 PyMySQL
+gunicorn

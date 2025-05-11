@@ -2,144 +2,224 @@
 
 {% block title %}Book Mangoes in Advance{% endblock %}
 
+{% block styles %}
+<style>
+    .booking-form-card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .booking-form-header {
+        background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+        padding: 1.5rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+    }
+    
+    .quantity-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .quantity-btn:hover {
+        background-color: #e9ecef;
+    }
+    
+    .quantity-input {
+        width: 70px;
+        text-align: center;
+        border-radius: 5px;
+        margin: 0 10px;
+    }
+    
+    .summary-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.25rem;
+    }
+    
+    .benefits-list li {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .benefit-icon {
+        width: 24px;
+        height: 24px;
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="card border-0 shadow-lg rounded-3">
-                <div class="card-header bg-success text-white py-3">
-                    <h3 class="mb-0 text-center">
-                        <i class="fas fa-calendar-check me-2"></i>Book Mangoes in Advance
-                    </h3>
-                </div>
-                <div class="card-body p-4">
-                    <p class="lead text-center mb-4">
-                        Book your favorite mangoes in advance and get them delivered on your preferred date!
-                    </p>
-                    
-                    <!-- Flash messages -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
-                    
-                    <form method="post" action="{{ url_for('book_mangoes') }}" class="needs-validation" novalidate>
-                        <div class="mb-4">
-                            <label for="product_id" class="form-label">Select Mango Variety <span class="text-danger">*</span></label>
-                            <select class="form-select" id="product_id" name="product_id" required>
-                                <option value="" selected disabled>Choose a mango variety</option>
-                                {% for product in products %}
-                                <option value="{{ product.id }}" data-price="{{ product.price }}">
-                                    {{ product.name }} - ₹{{ product.price }}/dozen
-                                </option>
-                                {% endfor %}
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a mango variety.
-                            </div>
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="quantity" class="form-label">Quantity (in dozens) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-box"></i></span>
-                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="10" value="1" required>
-                                <span class="input-group-text">dozen</span>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="card border-0 shadow-lg booking-form-card mb-4">
+                <div class="booking-form-header text-white">
+                    <h2 class="mb-0 text-center">
+                        <i class="fas fa-calendar-check me-2"></i>Book Mangoes in Advance
+                    </h2>
+                    <p class="text-center text-white-50 mb-0 mt-2">Reserve your favorite mangoes for delivery on your preferred date</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="post" action="{{ url_for('book_mangoes') }}" class="needs-validation" id="booking-form" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="product_id" class="form-label fw-bold">Select Mango Variety <span class="text-danger">*</span></label>
+                                <select class="form-select" id="product_id" name="product_id" required>
+                                    <option value="" selected disabled>Choose a mango variety</option>
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}" data-price="{{ product.price }}">
+                                        {{ product.name }} - ₹{{ product.price }}/dozen
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a mango variety.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="quantity" class="form-label fw-bold">Quantity (dozens) <span class="text-danger">*</span></label>
+                                <div class="quantity-selector">
+                                    <button type="button" class="quantity-btn" id="quantity-decrease">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" class="form-control quantity-input" id="quantity" name="quantity" min="1" max="10" value="1" required>
+                                    <button type="button" class="quantity-btn" id="quantity-increase">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">Maximum 10 dozens per booking</div>
                                 <div class="invalid-feedback">
                                     Please enter a valid quantity (1-10 dozens).
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <label for="delivery_date" class="form-label">Preferred Delivery Date <span class="text-danger">*</span></label>
+                        <div class="mb-3">
+                            <label for="delivery_date" class="form-label fw-bold">Preferred Delivery Date <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                 <input type="date" class="form-control" id="delivery_date" name="delivery_date" required>
-                                <div class="invalid-feedback">
-                                    Please select a valid delivery date.
-                                </div>
                             </div>
-                            <small class="text-muted">Please select a date at least 3 days from today.</small>
+                            <div class="form-text">Please select a date at least 3 days from today</div>
+                            <div class="invalid-feedback">
+                                Please select a valid delivery date.
+                            </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <label for="shipping_address" class="form-label">Shipping Address <span class="text-danger">*</span></label>
+                        <div class="mb-3">
+                            <label for="shipping_address" class="form-label fw-bold">Shipping Address <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-home"></i></span>
                                 <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" required></textarea>
-                                <div class="invalid-feedback">
-                                    Please enter your shipping address.
-                                </div>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please enter your shipping address.
                             </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10}" required>
+                                </div>
+                                <div class="form-text">10-digit mobile number without country code</div>
                                 <div class="invalid-feedback">
                                     Please enter a valid 10-digit phone number.
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="notes" class="form-label">Additional Notes (Optional)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="notes" class="form-label fw-bold">Additional Notes</label>
                                 <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
+                                <div class="form-text">Any special instructions for delivery</div>
                             </div>
-                            <small class="text-muted">Any special instructions for delivery or packaging?</small>
                         </div>
                         
-                        <div class="bg-light p-3 mb-4 rounded border">
-                            <h5>Order Summary</h5>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Product:</span>
-                                <span id="summary-product">-</span>
+                        <div class="summary-card mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">Order Summary</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold">Product:</span>
+                                <span id="summary-product" class="text-success">-</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Quantity:</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold">Quantity:</span>
                                 <span id="summary-quantity">1 dozen</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Price per dozen:</span>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold">Price per dozen:</span>
                                 <span id="summary-price">₹0</span>
                             </div>
                             <hr>
-                            <div class="d-flex justify-content-between fw-bold">
+                            <div class="d-flex justify-content-between align-items-center fw-bold">
                                 <span>Total Amount:</span>
-                                <span id="summary-total" class="text-success">₹0</span>
+                                <span id="summary-total" class="fs-5 text-success">₹0</span>
                             </div>
                         </div>
                         
                         <div class="alert alert-info" role="alert">
-                            <div class="d-flex">
-                                <div class="me-3">
-                                    <i class="fas fa-info-circle fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5 class="alert-heading">Important Information</h5>
-                                    <p class="mb-0">
-                                        By placing this advance booking, you're reserving your mangoes for the selected delivery date. 
-                                        No payment is required now. You can pay at the time of delivery (Cash on Delivery). 
-                                        You can cancel your booking up to 24 hours before the delivery date.
-                                    </p>
-                                </div>
-                            </div>
+                            <h5><i class="fas fa-info-circle me-2"></i>Booking Terms</h5>
+                            <ul class="mb-0 ps-3 benefits-list">
+                                <li>
+                                    <span class="benefit-icon"><i class="fas fa-check"></i></span>
+                                    <span>No advance payment required - Pay on delivery</span>
+                                </li>
+                                <li>
+                                    <span class="benefit-icon"><i class="fas fa-check"></i></span>
+                                    <span>Free cancellation up to 24 hours before the delivery date</span>
+                                </li>
+                                <li>
+                                    <span class="benefit-icon"><i class="fas fa-check"></i></span>
+                                    <span>Get the freshest mangoes delivered on your selected date</span>
+                                </li>
+                            </ul>
                         </div>
                         
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold">
-                                <i class="fas fa-calendar-plus me-2"></i>Book Now
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg px-5 fw-bold" id="book-button">
+                                <i class="fas fa-calendar-plus me-2"></i>Confirm Booking
                             </button>
                         </div>
                     </form>
@@ -154,16 +234,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Form validation
-        const forms = document.querySelectorAll('.needs-validation');
+        const form = document.getElementById('booking-form');
         
-        Array.prototype.slice.call(forms).forEach(function(form) {
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
         });
         
         // Set minimum date for delivery
@@ -185,10 +263,41 @@
         };
         
         deliveryDateInput.min = formatDate(minDate);
+        deliveryDateInput.value = formatDate(minDate);
+        
+        // Handle quantity selector
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('quantity-decrease');
+        const increaseBtn = document.getElementById('quantity-increase');
+        
+        decreaseBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+                updateSummary();
+            }
+        });
+        
+        increaseBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value < 10) {
+                quantityInput.value = value + 1;
+                updateSummary();
+            }
+        });
+        
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (value > 10) {
+                this.value = 10;
+            }
+            updateSummary();
+        });
         
         // Order summary update
         const productSelect = document.getElementById('product_id');
-        const quantityInput = document.getElementById('quantity');
         const summaryProduct = document.getElementById('summary-product');
         const summaryQuantity = document.getElementById('summary-quantity');
         const summaryPrice = document.getElementById('summary-price');
@@ -196,8 +305,8 @@
         
         function updateSummary() {
             const selectedOption = productSelect.options[productSelect.selectedIndex];
-            const productName = selectedOption ? selectedOption.text.split(' - ')[0] : '-';
-            const productPrice = selectedOption ? parseInt(selectedOption.dataset.price) : 0;
+            const productName = selectedOption && selectedOption.value ? selectedOption.text.split(' - ')[0] : '-';
+            const productPrice = selectedOption && selectedOption.value ? parseInt(selectedOption.dataset.price) : 0;
             const quantity = parseInt(quantityInput.value) || 1;
             
             summaryProduct.textContent = productName;
@@ -207,7 +316,21 @@
         }
         
         productSelect.addEventListener('change', updateSummary);
-        quantityInput.addEventListener('input', updateSummary);
+        
+        // Set booking button state
+        function updateBookButtonState() {
+            const bookButton = document.getElementById('book-button');
+            const isProductSelected = productSelect.value !== '';
+            
+            if (isProductSelected) {
+                bookButton.disabled = false;
+            } else {
+                bookButton.disabled = true;
+            }
+        }
+        
+        productSelect.addEventListener('change', updateBookButtonState);
+        updateBookButtonState(); // Initialize on page load
     });
 </script>
 {% endblock %} 

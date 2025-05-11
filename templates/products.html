@@ -1,170 +1,217 @@
 {% extends "base.html" %}
 
-{% block title %}Premium Mangoes Collection{% endblock %}
+{% block title %}Our Mango Varieties{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Hero Banner -->
+<!-- Product Hero Section -->
+<section class="product-hero mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-lg-6 product-hero-content text-white">
+                <h1 class="display-4 fw-bold mb-3">Premium Mangoes</h1>
+                <p class="lead mb-4">Discover the finest mango varieties from across India</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Season Update Card -->
     <div class="row mb-5">
         <div class="col-12">
-            <div class="product-hero rounded-4 shadow-lg position-relative overflow-hidden">
-                <div class="product-hero-content p-4 p-md-5">
-                    <h1 class="display-4 fw-bold text-white mb-3" data-aos="fade-up">Discover Premium Mangoes</h1>
-                    <p class="lead text-white mb-4" data-aos="fade-up" data-aos-delay="100">
-                        Explore our collection of premium quality mangoes sourced from the finest orchards across India.
-                    </p>
-                    <div data-aos="fade-up" data-aos-delay="200">
-                        <a href="#products-section" class="btn btn-warning btn-lg rounded-pill fw-bold px-4">
-                            <i class="fas fa-shopping-basket me-2"></i>Shop Now
+            <div class="season-update-card d-flex align-items-center" data-aos="fade-up">
+                <div class="season-icon me-4">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Season Update</h5>
+                    <p class="mb-0">Great news! All our premium mango varieties including Alphonso, Kesar, Rajapuri, and Payri are now in stock.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row gx-4 gy-3">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="filter-card sticky-lg-top" style="top: 20px;" data-aos="fade-up">
+                <div class="filter-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                
+                <!-- Category Filter -->
+                <div class="filter-body">
+                    <h6 class="filter-title ms-3 mb-2">Categories</h6>
+                    <div class="filter-options">
+                        <a href="{{ url_for('products') }}" class="filter-option {% if not current_category %}active{% endif %}">
+                            All Categories
+                            <span class="badge bg-light text-dark float-end">{{ products|length }}</span>
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('products', category=category.id) }}" class="filter-option {% if current_category == category.id %}active{% endif %}">
+                            {{ category.name }}
+                            <span class="badge bg-light text-dark float-end">{{ category.products|length if category.products else '0' }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Price Filter -->
+                <div class="filter-body">
+                    <h6 class="filter-title ms-3 mb-2">Price Range</h6>
+                    <div class="filter-options">
+                        <a href="{{ url_for('products', sort='price_low') }}" class="filter-option {% if sort_by == 'price_low' %}active{% endif %}">
+                            Price: Low to High
+                        </a>
+                        <a href="{{ url_for('products', sort='price_high') }}" class="filter-option {% if sort_by == 'price_high' %}active{% endif %}">
+                            Price: High to Low
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Availability Filter -->
+                <div class="filter-body">
+                    <h6 class="filter-title ms-3 mb-2">Availability</h6>
+                    <div class="filter-options px-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="inStockFilter" checked>
+                            <label class="form-check-label" for="inStockFilter">
+                                In Stock
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="preOrderFilter">
+                            <label class="form-check-label" for="preOrderFilter">
+                                Available for Pre-Order
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ratings Filter -->
+                <div class="filter-body">
+                    <h6 class="filter-title ms-3 mb-2">Ratings</h6>
+                    <div class="filter-options px-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="rating5">
+                            <label class="form-check-label" for="rating5">
+                                <div class="product-rating text-warning">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="rating4">
+                            <label class="form-check-label" for="rating4">
+                                <div class="product-rating text-warning">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="rating3">
+                            <label class="form-check-label" for="rating3">
+                                <div class="product-rating text-warning">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Clear Filters Button -->
+                <div class="filter-body">
+                    <div class="d-grid px-3">
+                        <a href="{{ url_for('products') }}" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-times-circle me-2"></i>Clear All Filters
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Season Banner -->
-    <div class="season-update-card mb-5" data-aos="fade-up">
-        <div class="d-flex align-items-center">
-            <div class="season-icon me-4">
-                <i class="fas fa-bell"></i>
-            </div>
-            <div>
-                <h4 class="alert-heading mb-1">Mango Season Update</h4>
-                <p class="mb-0">Currently only <strong>Hapus, Payri, and Rajapuri</strong> varieties are available due to seasonal limitations. More varieties coming soon!</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Sidebar with filters -->
-        <div class="col-lg-3 mb-4 mb-lg-0">
-            <div class="sticky-lg-top" style="top: 100px; z-index: 10;">
-                <div class="filter-card mb-4" data-aos="fade-right">
-                    <div class="filter-header">
-                        <h5 class="mb-0">Categories</h5>
-                    </div>
-                    <div class="filter-body">
-                        <div class="filter-options">
-                            <a href="{{ url_for('products') }}" class="filter-option {% if not current_category %}active{% endif %}">
-                                <i class="fas fa-th-large me-2"></i>All Categories
-                            </a>
-                            {% for category in categories %}
-                            <a href="{{ url_for('products', category=category.id) }}" class="filter-option {% if current_category == category.id %}active{% endif %}">
-                                <i class="fas fa-tag me-2"></i>{{ category.name }}
-                            </a>
-                            {% endfor %}
+        
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Search and Sort -->
+            <div class="row align-items-center mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <form action="{{ url_for('products') }}" method="GET" class="search-form d-flex">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search mangoes..." name="search" value="{{ search_query }}">
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
-
-                <div class="filter-card" data-aos="fade-right" data-aos-delay="100">
-                    <div class="filter-header">
-                        <h5 class="mb-0">Sort By</h5>
-                    </div>
-                    <div class="filter-body">
-                        <div class="filter-options">
-                            <a href="{{ url_for('products', category=current_category, search=search_query, sort='name') }}" class="filter-option {% if sort_by == 'name' %}active{% endif %}">
-                                <i class="fas fa-sort-alpha-down me-2"></i>Name (A-Z)
-                            </a>
-                            <a href="{{ url_for('products', category=current_category, search=search_query, sort='price_low') }}" class="filter-option {% if sort_by == 'price_low' %}active{% endif %}">
-                                <i class="fas fa-sort-numeric-down me-2"></i>Price (Low to High)
-                            </a>
-                            <a href="{{ url_for('products', category=current_category, search=search_query, sort='price_high') }}" class="filter-option {% if sort_by == 'price_high' %}active{% endif %}">
-                                <i class="fas fa-sort-numeric-up me-2"></i>Price (High to Low)
-                            </a>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-md-end align-items-center">
+                        <span class="product-count bg-light rounded-pill me-3">{{ products|length }} Products</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-sort me-1"></i> Sort By
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                                <li><a class="dropdown-item {% if sort_by == 'name' %}active{% endif %}" href="{{ url_for('products', category=current_category, search=search_query) }}">Name</a></li>
+                                <li><a class="dropdown-item {% if sort_by == 'price_low' %}active{% endif %}" href="{{ url_for('products', category=current_category, search=search_query, sort='price_low') }}">Price: Low to High</a></li>
+                                <li><a class="dropdown-item {% if sort_by == 'price_high' %}active{% endif %}" href="{{ url_for('products', category=current_category, search=search_query, sort='price_high') }}">Price: High to Low</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Products grid -->
-        <div class="col-lg-9" id="products-section">
-            <!-- Search results info -->
-            <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up">
-                <h2 class="mb-0 products-heading">
-                    {% if search_query %}
-                    <span class="position-relative">
-                        Search Results for "{{ search_query }}"
-                        <span class="heading-underline"></span>
-                    </span>
-                    {% elif current_category %}
-                    <span class="position-relative">
-                        {{ get_category_name(current_category) }} Mangoes
-                        <span class="heading-underline"></span>
-                    </span>
-                    {% else %}
-                    <span class="position-relative">
-                        All Mangoes
-                        <span class="heading-underline"></span>
-                    </span>
-                    {% endif %}
-                </h2>
-                <span class="badge bg-warning rounded-pill product-count">{{ products|length }} products</span>
-            </div>
-
-            <!-- Products grid -->
+            
+            <!-- Products -->
             <div class="row g-4">
                 {% if products %}
                     {% for product in products %}
-                    <div class="col-md-6 col-lg-4 mb-4" data-aos="zoom-in" data-aos-delay="{{ loop.index * 50 }}">
-                        <div class="card border-0 shadow-lg product-card h-100">
-                            <div class="product-label">
-                                {% if 'hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower() %}
-                                <span class="badge bg-success">In Season</span>
-                                {% else %}
-                                <span class="badge bg-secondary">Coming Soon</span>
+                    <div class="col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                        <div class="card h-100 border-0 shadow product-card">
+                            <div class="position-relative">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                                    <img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                                </a>
+                                {% if product.is_in_season %}
+                                <span class="position-absolute top-0 end-0 badge bg-success m-2">In Season</span>
                                 {% endif %}
-                            </div>
-                            <div class="product-img-container">
-                                {% if 'hapus' in product.name.lower() %}
-                                    <img src="{{ url_for('static', filename='images/hapus3.jpg') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% elif 'payri' in product.name.lower() %}
-                                    <img src="{{ url_for('static', filename='images/alphanso.jpg') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% elif 'rajapuri' in product.name.lower() %}
-                                    <img src="{{ url_for('static', filename='images/rajapuri mango.jpg') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% elif 'kesar' in product.name.lower() %}
-                                    <img src="{{ url_for('static', filename='images/kesar mango.webp') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% elif 'alphonso' in product.name.lower() or 'alphanso' in product.name.lower() %}
-                                    <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/mango (2).jpg') }}" class="card-img-top" alt="{{ product.name }}">
-                                {% endif %}
-                                <div class="product-overlay">
-                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-light rounded-circle quick-view-btn" data-bs-toggle="tooltip" title="Quick View">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    {% if 'hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower() %}
-                                    <a href="#" class="btn btn-sm btn-light rounded-circle wishlist-btn" data-bs-toggle="tooltip" title="Add to Wishlist">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                    {% endif %}
-                                </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                                <h5 class="card-title"><a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-dark text-decoration-none">{{ product.name }}</a></h5>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-warning fw-bold price">₹{{ product.price }}</span>
-                                    <div class="product-rating">
-                                        <i class="fas fa-star text-warning"></i>
-                                        <i class="fas fa-star text-warning"></i>
-                                        <i class="fas fa-star text-warning"></i>
-                                        <i class="fas fa-star text-warning"></i>
-                                        <i class="fas fa-star-half-alt text-warning"></i>
-                                    </div>
+                                    <span class="price text-success fw-bold">₹{{ product.price }}</span>
+                                    <span class="product-rating text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </span>
                                 </div>
-                                <p class="card-text small product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                                <p class="product-description mb-0">{{ product.description }}</p>
                             </div>
                             <div class="card-footer bg-white border-top-0">
                                 <div class="d-grid">
-                                    {% if 'hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower() %}
-                                        <button class="btn btn-warning fw-bold add-to-cart-btn">
-                                            <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                        </button>
+                                    {% if product.stock > 0 %}
+                                        <form action="{{ url_for('quick_add_to_cart', product_id=product.id) }}" method="post">
+                                            <button type="submit" class="btn btn-warning fw-bold w-100 add-to-cart-btn">
+                                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                            </button>
+                                        </form>
                                     {% else %}
-                                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-secondary fw-bold">
-                                            <i class="fas fa-bell me-2"></i>Notify Me
+                                        <a href="{{ url_for('book_mangoes') }}" class="btn btn-outline-success fw-bold">
+                                            <i class="fas fa-calendar-check me-2"></i>Book for Season
                                         </a>
                                     {% endif %}
                                 </div>

@@ -2,89 +2,377 @@
 
 {% block title %}My Mango Bookings{% endblock %}
 
+{% block styles %}
+<style>
+    .booking-card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .booking-empty-state {
+        text-align: center;
+        padding: 50px 20px;
+    }
+    
+    .booking-empty-icon {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+    
+    .booking-header {
+        background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .booking-tabs .nav-link {
+        color: #495057;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-bottom: 3px solid transparent;
+        font-weight: 600;
+    }
+    
+    .booking-tabs .nav-link.active {
+        color: #198754;
+        background-color: transparent;
+        border-bottom-color: #198754;
+    }
+    
+    .booking-tabs .nav-link:hover:not(.active) {
+        border-bottom-color: #e9ecef;
+    }
+    
+    .booking-count {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        color: #198754;
+        font-size: 0.75rem;
+        margin-left: 5px;
+    }
+    
+    .table-bookings th {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .table-bookings td {
+        vertical-align: middle;
+    }
+    
+    .booking-status {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+    
+    .booking-status.pending {
+        background-color: #ffc107;
+    }
+    
+    .booking-status.confirmed {
+        background-color: #0d6efd;
+    }
+    
+    .booking-status.delivered {
+        background-color: #198754;
+    }
+    
+    .booking-status.cancelled {
+        background-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="mb-0"><i class="fas fa-calendar-alt text-success me-2"></i>My Mango Bookings</h1>
-                <a href="{{ url_for('book_mangoes') }}" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-2"></i>New Booking
-                </a>
-            </div>
-            
-            <!-- Flash messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-            
-            {% if bookings %}
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Booking ID</th>
-                                        <th scope="col">Product</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Delivery Date</th>
-                                        <th scope="col">Total Amount</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for booking in bookings %}
-                                    <tr>
-                                        <td>#{{ booking.id }}</td>
-                                        <td>{{ booking.product.name if booking.product else 'N/A' }}</td>
-                                        <td>{{ booking.quantity }} dozen</td>
-                                        <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
-                                        <td>₹{{ booking.total_amount }}</td>
-                                        <td>
-                                            {% if booking.status == 'pending' %}
-                                                <span class="badge bg-warning text-dark">Pending</span>
-                                            {% elif booking.status == 'confirmed' %}
-                                                <span class="badge bg-primary">Confirmed</span>
-                                            {% elif booking.status == 'delivered' %}
-                                                <span class="badge bg-success">Delivered</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">Cancelled</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye"></i> View
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            {% else %}
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-5 text-center">
-                        <img src="{{ url_for('static', filename='images/empty-bookings.png') }}" alt="No Bookings" class="img-fluid mb-3" style="max-height: 200px;" onerror="this.src='https://via.placeholder.com/200x200?text=No+Bookings'">
-                        <h3 class="mb-3">No Bookings Yet</h3>
-                        <p class="text-muted mb-4">You haven't made any advance bookings yet. Book your favorite mangoes now!</p>
-                        <a href="{{ url_for('book_mangoes') }}" class="btn btn-success btn-lg px-4">
-                            Book Mangoes
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="card border-0 shadow-lg booking-card">
+        <div class="booking-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-calendar-alt me-2"></i>My Bookings
+            </h2>
+            <a href="{{ url_for('book_mangoes') }}" class="btn btn-light">
+                <i class="fas fa-plus-circle me-2"></i>New Booking
+            </a>
         </div>
+        
+        {% if bookings %}
+        <div class="card-body p-0">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs booking-tabs" id="bookingTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                        All <span class="booking-count">{{ bookings|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                        Pending <span class="booking-count">{{ pending_bookings|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button" role="tab">
+                        Confirmed <span class="booking-count">{{ active_bookings|length }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+                        Completed <span class="booking-count">{{ completed_bookings|length }}</span>
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- All Bookings Tab -->
+                <div class="tab-pane fade show active" id="all" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bookings mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Delivery Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in bookings %}
+                                <tr>
+                                    <td class="fw-bold">#{{ booking.id }}</td>
+                                    <td>{{ booking.product.name if booking.product else 'N/A' }}</td>
+                                    <td>{{ booking.quantity }} dozen</td>
+                                    <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                                    <td>₹{{ booking.total_amount }}</td>
+                                    <td>
+                                        {% if booking.status == 'pending' %}
+                                            <span class="booking-status pending"></span> Pending
+                                        {% elif booking.status == 'confirmed' %}
+                                            <span class="booking-status confirmed"></span> Confirmed
+                                        {% elif booking.status == 'delivered' %}
+                                            <span class="booking-status delivered"></span> Delivered
+                                        {% else %}
+                                            <span class="booking-status cancelled"></span> Cancelled
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pending Bookings Tab -->
+                <div class="tab-pane fade" id="pending" role="tabpanel">
+                    {% if pending_bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bookings mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Delivery Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in pending_bookings %}
+                                <tr>
+                                    <td class="fw-bold">#{{ booking.id }}</td>
+                                    <td>{{ booking.product.name if booking.product else 'N/A' }}</td>
+                                    <td>{{ booking.quantity }} dozen</td>
+                                    <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                                    <td>₹{{ booking.total_amount }}</td>
+                                    <td>
+                                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="fas fa-inbox fa-2x mb-3"></i>
+                        <p>You don't have any pending bookings.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Active Bookings Tab -->
+                <div class="tab-pane fade" id="active" role="tabpanel">
+                    {% if active_bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bookings mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Delivery Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in active_bookings %}
+                                <tr>
+                                    <td class="fw-bold">#{{ booking.id }}</td>
+                                    <td>{{ booking.product.name if booking.product else 'N/A' }}</td>
+                                    <td>{{ booking.quantity }} dozen</td>
+                                    <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                                    <td>₹{{ booking.total_amount }}</td>
+                                    <td>
+                                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="fas fa-clipboard-check fa-2x mb-3"></i>
+                        <p>You don't have any confirmed bookings.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Completed Bookings Tab -->
+                <div class="tab-pane fade" id="completed" role="tabpanel">
+                    {% if completed_bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bookings mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Delivery Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in completed_bookings %}
+                                <tr>
+                                    <td class="fw-bold">#{{ booking.id }}</td>
+                                    <td>{{ booking.product.name if booking.product else 'N/A' }}</td>
+                                    <td>{{ booking.quantity }} dozen</td>
+                                    <td>{{ booking.delivery_date.strftime('%d %b, %Y') }}</td>
+                                    <td>₹{{ booking.total_amount }}</td>
+                                    <td>
+                                        {% if booking.status == 'delivered' %}
+                                            <span class="booking-status delivered"></span> Delivered
+                                        {% else %}
+                                            <span class="booking-status cancelled"></span> Cancelled
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="fas fa-check-circle fa-2x mb-3"></i>
+                        <p>You don't have any completed bookings.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card-body p-5 booking-empty-state">
+            <div class="booking-empty-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="mb-3">No Bookings Yet</h3>
+            <p class="text-muted mb-4">You haven't made any advance bookings yet. Book your favorite mangoes now!</p>
+            <a href="{{ url_for('book_mangoes') }}" class="btn btn-success btn-lg px-4">
+                <i class="fas fa-calendar-plus me-2"></i>Book Mangoes
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Activate the appropriate tab based on URL hash
+        const hash = window.location.hash;
+        if (hash) {
+            const tabId = hash.substring(1);
+            const tabEl = document.querySelector(`#bookingTabs button[data-bs-target="#${tabId}"]`);
+            if (tabEl) {
+                const tab = new bootstrap.Tab(tabEl);
+                tab.show();
+            }
+        }
+        
+        // Update URL when tab changes
+        const tabEls = document.querySelectorAll('#bookingTabs button');
+        tabEls.forEach(function(tabEl) {
+            tabEl.addEventListener('shown.bs.tab', function (e) {
+                const target = e.target.getAttribute('data-bs-target');
+                history.replaceState(null, null, target.replace('#', '#'));
+            });
+        });
+    });
+</script>
 {% endblock %} 

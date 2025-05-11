@@ -618,25 +618,30 @@
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 shadow-sm hover-scale">
                     <div class="position-relative">
-                        <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">Premium</span>
-                        <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" class="card-img-top" alt="Alphonso Mangoes" style="height: 200px; object-fit: cover;">
-                        <div class="position-absolute bottom-0 start-0 m-2">
-                            <span class="badge bg-success px-3 py-2"><i class="fas fa-boxes me-1"></i> IN STOCK</span>
-                        </div>
+                        <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2 fs-6 px-3 py-2">Best Seller</span>
+                        <img src="{{ url_for('static', filename='images/alphanshoo.jpg') }}" class="card-img-top" alt="Alphonso Mango">
                     </div>
-                    <div class="card-body text-center p-4">
-                        <h4 class="card-title fw-bold mb-2">Alphonso Mangoes</h4>
-                        <p class="text-muted mb-1">Origin: Ratnagiri, Maharashtra</p>
-                        <div class="text-warning mb-3">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Alphonso Mango</h5>
+                        <p class="text-success mb-1">₹1500/dozen</p>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="rating">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <small class="text-muted ms-2">(120 reviews)</small>
                         </div>
-                        <h3 class="text-success mb-3">₹1500<span class="fs-6">/dozen</span></h3>
-                        <p class="card-text mb-3">The King of Mangoes with unmatched taste and aroma. Limited stock!</p>
-                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                        <p class="card-text small">The king of mangoes, known for its rich, sweet flavor and creamy texture.</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <form action="{{ url_for('quick_add_to_cart', product_id=1) }}" method="post" class="quick-add-form">
+                            <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold add-to-cart-btn">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -663,7 +668,11 @@
                         </div>
                         <h3 class="text-success mb-3">₹1200<span class="fs-6">/dozen</span></h3>
                         <p class="card-text mb-3">Sweet and aromatic mangoes with saffron-colored pulp. Fresh stock!</p>
-                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                        <form action="{{ url_for('quick_add_to_cart', product_id=2) }}" method="post">
+                            <button type="submit" class="btn btn-warning w-100 rounded-pill add-to-cart-btn">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -690,7 +699,11 @@
                         </div>
                         <h3 class="text-success mb-3">₹1000<span class="fs-6">/dozen</span></h3>
                         <p class="card-text mb-3">Large, juicy mangoes perfect for desserts and milkshakes.</p>
-                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                        <form action="{{ url_for('quick_add_to_cart', product_id=3) }}" method="post">
+                            <button type="submit" class="btn btn-warning w-100 rounded-pill add-to-cart-btn">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -717,7 +730,11 @@
                         </div>
                         <h3 class="text-success mb-3">₹1200<span class="fs-6">/dozen</span></h3>
                         <p class="card-text mb-3">Sweet and tangy flavor, perfect for making aamras and smoothies.</p>
-                        <a href="{{ url_for('products') }}" class="btn btn-warning w-100 rounded-pill">Add to Cart</a>
+                        <form action="{{ url_for('quick_add_to_cart', product_id=4) }}" method="post">
+                            <button type="submit" class="btn btn-warning w-100 rounded-pill add-to-cart-btn">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -804,6 +821,23 @@
         AOS.init({
             once: true,
             duration: 800
+        });
+        
+        // Handle add to cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Allow the form submission to proceed normally
+                const form = this.closest('form');
+                if (form) {
+                    // Just visual feedback, don't prevent default
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart';
+                    this.classList.remove('btn-warning');
+                    this.classList.add('btn-success');
+                    
+                    // Form will automatically submit
+                }
+            });
         });
     });
 </script>

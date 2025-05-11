@@ -118,7 +118,7 @@
                         {% endif %}
                     </div>
                     
-                    {% if 'hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower() %}
+                    {% if product.stock > 0 %}
                         <div class="in-season-notification mb-4">
                             <i class="fas fa-check-circle me-2"></i> This variety is currently in season and available for purchase!
                         </div>
@@ -133,8 +133,8 @@
                         <p>{{ product.description }}</p>
                     </div>
 
-                    {% if 'hapus' in product.name.lower() or 'payri' in product.name.lower() or 'rajapuri' in product.name.lower() %}
-                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mb-4">
+                    {% if product.stock > 0 %}
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mb-4" id="add-to-cart-form">
                             <div class="product-quantity mb-3">
                                 <h5 class="mb-3">Quantity</h5>
                                 <div class="quantity-selector d-flex align-items-center">
@@ -152,7 +152,7 @@
                                 <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold me-2">
                                     <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill">
+                                <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill" id="wishlist-btn">
                                     <i class="fas fa-heart me-2"></i>Add to Wishlist
                                 </button>
                             </div>
@@ -160,15 +160,15 @@
                     {% else %}
                         <div class="out-of-season-action mb-4">
                             <p class="text-danger mb-3">
-                                <i class="fas fa-info-circle me-2"></i>This variety is currently out of season. You can pre-order for the next season or try our available varieties.
+                                <i class="fas fa-info-circle me-2"></i>This variety is currently out of season. You can book mangoes for delivery in season or try our available varieties.
                             </p>
                             <div class="d-flex gap-3">
                                 <a href="{{ url_for('products') }}" class="btn btn-outline-success rounded-pill">
                                     <i class="fas fa-arrow-left me-2"></i>View Available Varieties
                                 </a>
-                                <button type="button" class="btn btn-outline-secondary rounded-pill">
-                                    <i class="fas fa-bell me-2"></i>Notify Me
-                                </button>
+                                <a href="{{ url_for('book_mangoes') }}" class="btn btn-success rounded-pill">
+                                    <i class="fas fa-calendar-check me-2"></i>Book for Season
+                                </a>
                             </div>
                         </div>
                     {% endif %}
@@ -787,6 +787,33 @@
                     quantityInput.value = currentValue + 1;
                 }
             });
+        }
+        
+        // Add to cart form handling
+        const addToCartForm = document.getElementById('add-to-cart-form');
+        if (addToCartForm) {
+            console.log('Add to cart form found:', addToCartForm);
+            
+            // Monitor form submission
+            addToCartForm.addEventListener('submit', function(e) {
+                console.log('Form submit event triggered');
+                
+                // Form validation
+                const quantityInput = this.querySelector('#quantity');
+                const quantity = parseInt(quantityInput.value);
+                
+                if (isNaN(quantity) || quantity <= 0) {
+                    console.log('Invalid quantity:', quantity);
+                    e.preventDefault();
+                    alert('Please enter a valid quantity');
+                    return false;
+                }
+                
+                console.log('Form submitting with quantity:', quantity);
+                // Let the form submit naturally
+            });
+        } else {
+            console.log('Add to cart form not found');
         }
         
         // Star rating system
