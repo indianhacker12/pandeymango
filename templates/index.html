@@ -322,6 +322,14 @@
             height: 70vh;
         }
     }
+
+    .booking-cta-section {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for("static", filename="images/mangos.jpg") }}');
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
 </style>
 {% endblock %}
 
@@ -750,7 +758,7 @@
 </section>
 
 <!-- Booking CTA Section -->
-<section class="py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/mangos.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+<section class="py-5 booking-cta-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7 text-white" data-aos="fade-right">

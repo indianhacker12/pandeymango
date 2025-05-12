@@ -2,20 +2,56 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block header %}Dashboard{% endblock %}
+{% block header %}डैशबोर्ड <small class="text-muted fs-6">आपका मैंगो बिज़नेस का कंट्रोल सेंटर</small>{% endblock %}
 
 {% block header_buttons %}
 <div class="btn-group me-2">
     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
-        <i class="fas fa-print me-1"></i> Print
+        <i class="fas fa-print me-1"></i> प्रिंट
     </button>
     <button type="button" class="btn btn-sm btn-outline-secondary">
-        <i class="fas fa-download me-1"></i> Export
+        <i class="fas fa-download me-1"></i> एक्सपोर्ट
     </button>
 </div>
 {% endblock %}
 
 {% block content %}
+<!-- Quick Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-0"><i class="fas fa-bolt text-warning me-2"></i>क्विक एक्शन</h5>
+                    <span id="last-updated" class="text-muted small">आखिरी अपडेट: <span id="update-time">{{ now }}</span></span>
+                </div>
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('admin_product_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-1"></i> नया प्रोडक्ट
+                    </a>
+                    <a href="{{ url_for('admin_bookings') }}?status=pending" class="btn btn-warning position-relative">
+                        <i class="fas fa-calendar-check me-1"></i> आज की बुकिंग
+                        {% if pending_bookings_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ pending_bookings_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <a href="#" class="btn btn-success" onclick="refreshData(); return false;">
+                        <i class="fas fa-sync-alt me-1"></i> डैशबोर्ड रिफ्रेश
+                    </a>
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-info text-white">
+                        <i class="fas fa-users me-1"></i> ग्राहक प्रबंधन
+                    </a>
+                    <a href="{{ url_for('admin_settings') }}" class="btn btn-secondary">
+                        <i class="fas fa-cog me-1"></i> सेटिंग्स
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Statistics Cards Row -->
 <div class="row mb-4">
     <!-- Total Orders Card -->
@@ -24,9 +60,9 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-muted mb-0">Total Orders</h6>
-                        <h3 class="mt-2 mb-0">{{ total_orders }}</h3>
-                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 12.5% <small class="text-muted">from last month</small></p>
+                        <h6 class="text-muted mb-0">कुल ऑर्डर</h6>
+                        <h3 class="mt-2 mb-0" id="total-orders">{{ total_orders }}</h3>
+                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 12.5% <small class="text-muted">पिछले महीने से</small></p>
                     </div>
                     <div class="card-icon bg-primary bg-opacity-10 text-primary">
                         <i class="fas fa-shopping-cart"></i>
@@ -42,12 +78,36 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-muted mb-0">Total Revenue</h6>
-                        <h3 class="mt-2 mb-0">₹{{ total_revenue }}</h3>
-                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 8.2% <small class="text-muted">from last month</small></p>
+                        <h6 class="text-muted mb-0">कुल राजस्व</h6>
+                        <h3 class="mt-2 mb-0" id="total-revenue">₹{{ total_revenue }}</h3>
+                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 8.2% <small class="text-muted">पिछले महीने से</small></p>
                     </div>
                     <div class="card-icon bg-success bg-opacity-10 text-success">
                         <i class="fas fa-rupee-sign"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Total Bookings Card -->
+    <div class="col-md-3">
+        <div class="card shadow-sm stats-card danger position-relative">
+            {% if pending_bookings_count > 0 %}
+            <div class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger pending-badge badge-pending-count">
+                {{ pending_bookings_count }} नई
+                <span class="visually-hidden">नई बुकिंग</span>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-0">कुल बुकिंग</h6>
+                        <h3 class="mt-2 mb-0" id="total-bookings">{{ total_bookings }}</h3>
+                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 15.3% <small class="text-muted">पिछले महीने से</small></p>
+                    </div>
+                    <div class="card-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
                 </div>
             </div>
@@ -60,9 +120,9 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-muted mb-0">Total Customers</h6>
-                        <h3 class="mt-2 mb-0">{{ total_customers }}</h3>
-                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 5.1% <small class="text-muted">from last month</small></p>
+                        <h6 class="text-muted mb-0">कुल ग्राहक</h6>
+                        <h3 class="mt-2 mb-0" id="total-customers">{{ total_customers }}</h3>
+                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 5.1% <small class="text-muted">पिछले महीने से</small></p>
                     </div>
                     <div class="card-icon bg-warning bg-opacity-10 text-warning">
                         <i class="fas fa-users"></i>
@@ -71,20 +131,64 @@
             </div>
         </div>
     </div>
-    
-    <!-- Total Products Card -->
-    <div class="col-md-3">
-        <div class="card shadow-sm stats-card info">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-0">Total Products</h6>
-                        <h3 class="mt-2 mb-0">{{ total_products }}</h3>
-                        <p class="text-success mt-2 mb-0"><i class="fas fa-arrow-up me-1"></i> 3.7% <small class="text-muted">from last month</small></p>
-                    </div>
-                    <div class="card-icon bg-info bg-opacity-10 text-info">
-                        <i class="fas fa-box"></i>
-                    </div>
+</div>
+
+<!-- Today's Deliveries Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm border-primary">
+            <div class="card-header bg-primary bg-opacity-10 text-primary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-truck me-2"></i>आज की डिलीवरी</h5>
+                <span id="today-date" class="badge bg-primary">{{ today }}</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>बुकिंग ID</th>
+                                <th>ग्राहक</th>
+                                <th>प्रोडक्ट</th>
+                                <th>मात्रा</th>
+                                <th>पता</th>
+                                <th>फोन</th>
+                                <th>स्थिति</th>
+                                <th class="text-end">एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="today-deliveries">
+                            {% for booking in today_deliveries %}
+                            <tr>
+                                <td>#{{ booking.id }}</td>
+                                <td>{{ booking.user.username }}</td>
+                                <td>{{ booking.product.name }}</td>
+                                <td>{{ booking.quantity }} दर्जन</td>
+                                <td class="text-truncate" style="max-width: 150px;" title="{{ booking.shipping_address }}">{{ booking.shipping_address }}</td>
+                                <td>{{ booking.phone }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 
+                                        'warning' if booking.status == 'pending' else 
+                                        'primary' if booking.status == 'confirmed' else 
+                                        'success' if booking.status == 'delivered' else 
+                                        'danger' 
+                                    }}">{{ booking.status }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('admin_booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-success mark-delivered" data-id="{{ booking.id }}" title="मार्क एज डिलीवर्ड">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr id="no-deliveries-row">
+                                <td colspan="8" class="text-center py-3">आज के लिए कोई डिलीवरी नहीं है।</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -97,11 +201,11 @@
     <div class="col-md-8">
         <div class="card shadow-sm">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 fw-bold">Sales Overview</h6>
+                <h6 class="m-0 fw-bold">सेल्स ओवरव्यू</h6>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary active">Weekly</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">Monthly</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">Yearly</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary active">साप्ताहिक</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">मासिक</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">वार्षिक</button>
                 </div>
             </div>
             <div class="card-body">
@@ -114,7 +218,7 @@
     <div class="col-md-4">
         <div class="card shadow-sm">
             <div class="card-header py-3">
-                <h6 class="m-0 fw-bold">Product Categories</h6>
+                <h6 class="m-0 fw-bold">प्रोडक्ट कैटेगरी</h6>
             </div>
             <div class="card-body">
                 <canvas id="categoriesChart" height="300"></canvas>
@@ -123,49 +227,65 @@
     </div>
 </div>
 
-<!-- Recent Orders and Top Selling Products Row -->
-<div class="row">
-    <!-- Recent Orders Table -->
-    <div class="col-md-8">
+<!-- Recent Bookings Section -->
+<div class="row mt-4">
+    <div class="col-12">
         <div class="card shadow-sm">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 fw-bold">Recent Orders</h6>
-                <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            <div class="card-header py-3 d-flex justify-content-between align-items-center bg-danger bg-opacity-10">
+                <h6 class="m-0 fw-bold text-danger">
+                    <i class="fas fa-calendar-check me-2"></i>हाल की आम बुकिंग
+                    {% if pending_bookings_count > 0 %}
+                    <span class="badge bg-danger ms-2">{{ pending_bookings_count }} नई</span>
+                    {% endif %}
+                </h6>
+                <a href="{{ url_for('admin_bookings') }}" class="btn btn-sm btn-danger">सभी बुकिंग देखें</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-admin mb-0">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th class="text-end">Actions</th>
+                                <th>बुकिंग ID</th>
+                                <th>ग्राहक</th>
+                                <th>प्रोडक्ट</th>
+                                <th>मात्रा</th>
+                                <th>डिलीवरी तारीख</th>
+                                <th>राशि</th>
+                                <th>स्थिति</th>
+                                <th class="text-end">एक्शन</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for order in recent_orders %}
-                            <tr>
-                                <td>#{{ order.id }}</td>
-                                <td>{{ order.customer_name }}</td>
-                                <td>{{ order.date.strftime('%d-%m-%Y') }}</td>
-                                <td>₹{{ order.total_amount }}</td>
+                        <tbody id="recent-bookings">
+                            {% for booking in recent_bookings %}
+                            <tr {% if booking.status == 'pending' %}class="table-warning"{% endif %}>
+                                <td>#{{ booking.id }}</td>
+                                <td>{{ booking.user.username }}</td>
+                                <td>{{ booking.product.name }}</td>
+                                <td>{{ booking.quantity }} दर्जन</td>
+                                <td>{{ booking.delivery_date.strftime('%d-%m-%Y') }}</td>
+                                <td>₹{{ booking.total_amount }}</td>
                                 <td>
                                     <span class="badge bg-{{ 
-                                        'warning' if order.status == 'Pending' else 
-                                        'info' if order.status == 'Processing' else 
-                                        'primary' if order.status == 'Shipped' else 
-                                        'success' if order.status == 'Delivered' else 
+                                        'warning' if booking.status == 'pending' else 
+                                        'primary' if booking.status == 'confirmed' else 
+                                        'success' if booking.status == 'delivered' else 
                                         'danger' 
-                                    }}">{{ order.status }}</span>
+                                    }}">{{ booking.status }}</span>
                                 </td>
                                 <td class="text-end">
-                                    <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ url_for('admin_booking_detail', booking_id=booking.id) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    {% if booking.status == 'pending' %}
+                                    <button class="btn btn-sm btn-primary confirm-booking" data-id="{{ booking.id }}" title="कन्फर्म बुकिंग">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    {% endif %}
                                 </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-3">कोई हालिया बुकिंग नहीं मिली।</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -174,37 +294,19 @@
             </div>
         </div>
     </div>
-    
-    <!-- Top Selling Products -->
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 fw-bold">Top Selling Products</h6>
-                <a href="{{ url_for('admin_products') }}" class="btn btn-sm btn-outline-primary">View All</a>
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    {% for product in top_products %}
-                    <li class="list-group-item px-0">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <img src="{{ product.image }}" alt="{{ product.name }}" class="rounded" width="50" height="50" style="object-fit: cover;">
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h6 class="mb-0">{{ product.name }}</h6>
-                                <small class="text-muted">{{ product.sold_count }} units sold</small>
-                            </div>
-                            <div class="text-end">
-                                <h6 class="mb-0">₹{{ product.price }}</h6>
-                                <small class="text-{{ 'success' if product.in_stock else 'danger' }}">
-                                    {{ 'In Stock' if product.in_stock else 'Out of Stock' }}
-                                </small>
-                            </div>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
+</div>
+
+<!-- Notification Panel (Hidden by default) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-bell me-2"></i>
+            <strong class="me-auto">नोटिफिकेशन</strong>
+            <small id="notification-time">अभी</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="notification-message">
+            नई बुकिंग प्राप्त हुई!
         </div>
     </div>
 </div>
@@ -213,21 +315,22 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Initial chart setup that will be enhanced by admin.js
     // Sales Chart
     const salesCtx = document.getElementById('salesChart').getContext('2d');
     const salesChart = new Chart(salesCtx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: ['सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'रवि'],
             datasets: [{
-                label: 'Orders',
+                label: 'ऑर्डर',
                 data: [12, 19, 3, 5, 2, 3, 9],
                 borderColor: '#4e73df',
                 backgroundColor: 'rgba(78, 115, 223, 0.05)',
                 tension: 0.3,
                 fill: true
             }, {
-                label: 'Revenue',
+                label: 'राजस्व',
                 data: [7, 11, 5, 8, 3, 7, 15],
                 borderColor: '#1cc88a',
                 backgroundColor: 'rgba(28, 200, 138, 0.05)',
@@ -256,7 +359,7 @@
     const categoriesChart = new Chart(categoriesCtx, {
         type: 'pie',
         data: {
-            labels: ['Alphonso', 'Kesar', 'Chausa', 'Banganapalli', 'Others'],
+            labels: ['अल्फांसो', 'केसर', 'चौसा', 'बंगनपल्ली', 'अन्य'],
             datasets: [{
                 data: [35, 20, 15, 20, 10],
                 backgroundColor: [

@@ -122,6 +122,34 @@ with app.app_context():
     try:
         db.create_all()
         print("Database tables created successfully")
+        
+        # Initialize products in database if they don't exist yet
+        if Product.query.count() == 0:
+            print("Initializing database with mock products data...")
+            # Add categories first
+            for category_data in categories:
+                category = Category(
+                    id=category_data['id'],
+                    name=category_data['name'],
+                    description=category_data['description']
+                )
+                db.session.add(category)
+            
+            # Add products
+            for product_data in product_list:
+                product = Product(
+                    id=product_data['id'],
+                    name=product_data['name'],
+                    description=product_data['description'],
+                    price=product_data['price'],
+                    stock=product_data['stock'],
+                    image=product_data['image'],
+                    category_id=product_data['category_id']
+                )
+                db.session.add(product)
+            
+            db.session.commit()
+            print("Mock products data successfully added to database")
     except Exception as e:
         print(f"Error creating database tables: {e}")
 
@@ -131,9 +159,36 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session or User.query.get(session['user_id']).role != 'admin':
             flash('You need to be an admin to access this page.', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated_function
+
+# Admin login route
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    # If user is already logged in and is admin, redirect to admin dashboard
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user and user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Find user by username
+        user = User.query.filter_by(username=username).first()
+        
+        # Check if user exists and is an admin
+        if user and user.check_password(password) and user.role == 'admin':
+            session['user_id'] = user.id
+            flash('Welcome to Admin Dashboard!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid credentials or insufficient permissions', 'danger')
+    
+    # GET request - render admin login template
+    return render_template('admin/login.html')
 
 # Routes
 @app.route('/login', methods=['GET', 'POST'])
@@ -196,28 +251,74 @@ def register():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    flash('Logged out successfully!', 'success')
-    return redirect(url_for('login'))
+    # Check if the user is an admin before clearing the session
+    is_admin = False
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user and user.role == 'admin':
+            is_admin = True
+    
+    # Clear the session
+    session.clear()
+    flash('You have been logged out.', 'info')
+    
+    # Redirect to admin login if user was an admin
+    if is_admin:
+        return redirect(url_for('admin_login'))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/admin')
 @admin_required
 def admin_dashboard():
-    total_orders = Order.query.count()
-    total_revenue = db.session.query(db.func.sum(Order.total_amount)).scalar() or 0
-    total_customers = User.query.filter_by(role='customer').count()
-    total_products = Product.query.count()
-    
-    recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
-    top_products = Product.query.order_by(Product.stock.desc()).limit(5).all()
-    
-    return render_template('admin/dashboard.html',
-                         total_orders=total_orders,
-                         total_revenue=total_revenue,
-                         total_customers=total_customers,
-                         total_products=total_products,
-                         recent_orders=recent_orders,
-                         top_products=top_products)
+    try:
+        # Get basic stats
+        total_orders = Order.query.count()
+        total_revenue = db.session.query(db.func.sum(Order.total_amount)).scalar() or 0
+        total_customers = User.query.filter_by(role='customer').count()
+        total_products = Product.query.count()
+        total_bookings = Booking.query.count()
+        
+        # Get recent orders
+        recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
+        
+        # Get top products
+        top_products = Product.query.order_by(Product.stock.desc()).limit(5).all()
+        
+        # Get recent bookings
+        recent_bookings = Booking.query.order_by(Booking.booking_date.desc()).limit(5).all()
+        
+        # Get pending bookings count for notification
+        pending_bookings_count = Booking.query.filter_by(status='pending').count()
+        
+        # Get today's delivery for new section
+        today = datetime.now().date()
+        today_deliveries = Booking.query.filter(
+            Booking.delivery_date == today,
+            Booking.status.in_(['pending', 'confirmed'])
+        ).order_by(Booking.booking_date).all()
+        
+        # Format date for display
+        now = datetime.now().strftime('%H:%M:%S')
+        today_formatted = today.strftime('%d-%m-%Y')
+        
+        return render_template('admin/dashboard.html',
+                             total_orders=total_orders,
+                             total_revenue=total_revenue,
+                             total_customers=total_customers,
+                             total_products=total_products,
+                             total_bookings=total_bookings,
+                             recent_orders=recent_orders,
+                             recent_bookings=recent_bookings,
+                             pending_bookings_count=pending_bookings_count,
+                             top_products=top_products,
+                             today_deliveries=today_deliveries,
+                             now=now,
+                             today=today_formatted)
+    except Exception as e:
+        print(f"Error in admin dashboard: {str(e)}")
+        flash('An error occurred while loading the dashboard.', 'danger')
+        return redirect(url_for('admin_login'))
 
 # Mock data for demonstration
 product_list = [
@@ -366,6 +467,12 @@ def get_product_by_id(product_id):
                 'name': product.category.name
             } if product.category else None
         }
+    else:
+        # If not in database, try to find in product_list (mock data)
+        for p in product_list:
+            if p['id'] == product_id:
+                return p
+    
     return None
 
 def get_category_by_id(category_id):
@@ -855,6 +962,9 @@ def book_mangoes():
                 flash('Selected product does not exist.', 'danger')
                 return redirect(url_for('book_mangoes'))
             
+            # Get user details
+            user = User.query.get(session['user_id'])
+            
             # Calculate total amount
             total_amount = product.price * quantity
             
@@ -870,6 +980,7 @@ def book_mangoes():
                 phone=phone,
                 status='pending',
                 payment_status='pending',
+                # Use current timestamp for real-time display in admin panel
                 booking_date=datetime.now()
             )
             
@@ -879,6 +990,9 @@ def book_mangoes():
                 
                 # Get the newly created booking ID
                 booking_id = new_booking.id
+                
+                # Log notification for admin
+                print(f"New booking #{booking_id} created by {user.username} for {product.name} ({quantity} dozen) - will appear in admin dashboard")
                 
                 flash('Your mango booking has been placed successfully! You will receive a confirmation soon.', 'success')
                 return redirect(url_for('booking_detail', booking_id=booking_id))
@@ -1216,6 +1330,90 @@ def checkout():
         print(f"Error in checkout route: {str(e)}")
         flash('An error occurred while processing your checkout. Please try again.', 'danger')
         return redirect(url_for('cart'))
+
+# Simple redirect for direct access to /admin URL
+@app.route('/admin/')
+def admin_redirect():
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user and user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('admin_login'))
+
+# API endpoint for dashboard data (for AJAX updates)
+@app.route('/api/dashboard/stats')
+@admin_required
+def api_dashboard_stats():
+    try:
+        total_orders = Order.query.count()
+        total_revenue = db.session.query(db.func.sum(Order.total_amount)).scalar() or 0
+        total_customers = User.query.filter_by(role='customer').count()
+        total_bookings = Booking.query.count()
+        pending_bookings = Booking.query.filter_by(status='pending').count()
+        
+        # Get today's delivery for new section
+        today = datetime.now().date()
+        today_deliveries_count = Booking.query.filter(
+            Booking.delivery_date == today,
+            Booking.status.in_(['pending', 'confirmed'])
+        ).count()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'total_orders': total_orders,
+                'total_revenue': total_revenue,
+                'total_customers': total_customers, 
+                'total_bookings': total_bookings,
+                'pending_bookings': pending_bookings,
+                'today_deliveries': today_deliveries_count,
+                'timestamp': datetime.now().strftime('%H:%M:%S')
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# API endpoint to update booking status
+@app.route('/api/booking/<int:booking_id>/status', methods=['POST'])
+@admin_required
+def api_update_booking_status(booking_id):
+    try:
+        booking = Booking.query.get_or_404(booking_id)
+        status = request.json.get('status')
+        
+        # Validate status
+        valid_statuses = ['pending', 'confirmed', 'delivered', 'cancelled']
+        if status not in valid_statuses:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid status'
+            }), 400
+        
+        # Update status
+        booking.status = status
+        
+        # If status is delivered, update payment_status to paid
+        if status == 'delivered':
+            booking.payment_status = 'paid'
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'booking_id': booking.id,
+                'status': booking.status
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 if __name__ == '__main__':
     # Use PORT environment variable if available (for production)
