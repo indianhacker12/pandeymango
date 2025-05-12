@@ -26,6 +26,11 @@ db = SQLAlchemy(app)
 def serve_static(path):
     return send_from_directory('static', path)
 
+# Google site verification route
+@app.route('/googlee732bbc083033683.html')
+def google_verification():
+    return send_from_directory('static', 'googlee732bbc083033683.html')
+
 # Make some functions available to templates
 @app.context_processor
 def utility_processor():
@@ -665,14 +670,20 @@ def add_to_cart(product_id):
         session['cart'] = cart
         session.modified = True
         
-        flash(f'Added {quantity} {product["name"]} to your cart!', 'success')
-        return redirect(url_for('cart'))
+        # Check if action is buy now or add to cart
+        action = request.form.get('action', 'add_to_cart')
+        
+        if action == 'buy_now':
+            flash(f'Added {quantity} {product["name"]} to your cart!', 'success')
+            return redirect(url_for('checkout'))
+        else:
+            flash(f'Added {quantity} {product["name"]} to your cart!', 'success')
+            return redirect(url_for('cart'))
     except Exception as e:
         print(f"Error adding to cart: {str(e)}")
         flash('An error occurred while adding item to cart. Please try again.', 'danger')
         return redirect(url_for('product_detail', product_id=product_id))
 
-# Update products.html add to cart buttons
 @app.route('/quick-add-to-cart/<int:product_id>', methods=['POST'])
 def quick_add_to_cart(product_id):
     try:
@@ -708,7 +719,14 @@ def quick_add_to_cart(product_id):
         session['cart'] = cart
         session.modified = True
         
+        # Check if action is buy now or add to cart
+        action = request.form.get('action', 'add_to_cart')
+        
         flash(f'Added {product["name"]} to your cart!', 'success')
+        
+        # Redirect based on action
+        if action == 'buy_now':
+            return redirect(url_for('checkout'))
         
         # Redirect to referring page or products page if no referrer
         if request.referrer:
@@ -1138,6 +1156,66 @@ def update_booking_status(booking_id):
         print(f"Error in update_booking_status: {str(e)}")
         flash('An error occurred while processing your request.', 'danger')
         return redirect(url_for('admin_bookings'))
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    try:
+        # Check if user is logged in
+        if 'user_id' not in session:
+            flash('Please login to proceed to checkout.', 'warning')
+            return redirect(url_for('login', next=url_for('checkout')))
+        
+        # Get user's cart
+        cart_items = []
+        total = 0
+        
+        # Check if user has cart items in session
+        if 'cart' not in session or not session['cart']:
+            flash('Your cart is empty. Please add some items before checkout.', 'warning')
+            return redirect(url_for('products'))
+        
+        # Get cart items from session
+        cart_data = session['cart']
+        
+        # Loop through cart items
+        for item_id, item_data in cart_data.items():
+            # Get product details
+            try:
+                product_id = int(item_id)
+                product = get_product_by_id(product_id)
+                
+                if product:
+                    # Calculate item total
+                    item_total = product['price'] * item_data['quantity']
+                    total += item_total
+                    
+                    # Add item to cart items list
+                    cart_items.append({
+                        'product': product,
+                        'quantity': item_data['quantity'],
+                        'total': item_total
+                    })
+            except Exception as e:
+                print(f"Error processing cart item {item_id}: {str(e)}")
+        
+        if request.method == 'POST':
+            # Process the checkout
+            # For now, let's just clear the cart and show success message
+            session.pop('cart', None)
+            flash('Thank you for your order! Your mangoes will be on their way soon!', 'success')
+            return redirect(url_for('home'))
+        
+        # Get user details for pre-filling checkout form
+        user = get_user_by_id(session['user_id'])
+        
+        return render_template('checkout.html', 
+                              cart_items=cart_items, 
+                              total=total,
+                              user=user)
+    except Exception as e:
+        print(f"Error in checkout route: {str(e)}")
+        flash('An error occurred while processing your checkout. Please try again.', 'danger')
+        return redirect(url_for('cart'))
 
 if __name__ == '__main__':
     # Use PORT environment variable if available (for production)

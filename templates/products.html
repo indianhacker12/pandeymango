@@ -204,11 +204,18 @@
                             <div class="card-footer bg-white border-top-0">
                                 <div class="d-grid">
                                     {% if product.stock > 0 %}
-                                        <form action="{{ url_for('quick_add_to_cart', product_id=product.id) }}" method="post">
-                                            <button type="submit" class="btn btn-warning fw-bold w-100 add-to-cart-btn">
-                                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                                            </button>
-                                        </form>
+                                        <div class="d-flex gap-2">
+                                            <form action="{{ url_for('quick_add_to_cart', product_id=product.id) }}" method="post" class="w-50">
+                                                <button type="submit" class="btn btn-warning fw-bold w-100 add-to-cart-btn" name="action" value="add_to_cart">
+                                                    <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                                </button>
+                                            </form>
+                                            <form action="{{ url_for('quick_add_to_cart', product_id=product.id) }}" method="post" class="w-50">
+                                                <button type="submit" class="btn btn-success fw-bold w-100" name="action" value="buy_now">
+                                                    <i class="fas fa-bolt me-2"></i>Buy Now
+                                                </button>
+                                            </form>
+                                        </div>
                                     {% else %}
                                         <a href="{{ url_for('book_mangoes') }}" class="btn btn-outline-success fw-bold">
                                             <i class="fas fa-calendar-check me-2"></i>Book for Season
